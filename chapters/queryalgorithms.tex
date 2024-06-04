@@ -1,3 +1,5 @@
+\todowritehp{Finish writing Chapter 3}
+
 In this chapter, we study constructive separations in the query algorithm setting.
 In particular, we study the problem $\MAJ$ of distinguishing determining whether
 a binary string $x \in \{0, 1\}^n$ has at least $(\frac{1}{2}+\eps)n$ ones or
@@ -40,7 +42,7 @@ This will allow us to obtain a constructive separation.
 Fix $n$ and $\eps$, and let
 $X^+_\eps = \{x \in \{0, 1\}^n | w_1(x) \geq (\frac{1}{2}+\eps )n \}$
 and $X^-_\eps = \{x \in \{0, 1\}^n | w_1(x) \leq (\frac{1}{2}-\eps )n \}$.
-\todo{define w1}
+\todowrite{define w1, etc in introduction}
 
 For $\calD$ a probability distribution on $X^+_\eps \cup X^-_\eps$, denote
 by $\calD^+$ the probability distribution conditioned on $x \in X^+_\eps$,
@@ -67,7 +69,7 @@ Let $\calD$ be a symmetric distribution on $X^+_\eps \cup X^-_\eps$.
 \end{enumerate}
 \end{lemma}
 \begin{proof}
-    TODO.
+    TODO. \todowrite{prove symmetric distribution lemma}
 \end{proof}
 
 \begin{lemma}
@@ -171,7 +173,7 @@ f^+_{U_{S_n}}(w, t-w) = \frac{\binom{n-t}{k-w}}{\binom{n}{k}} = \frac{(n-t)!k!(n
 \end{equation}
 
 Where $(n)_h = \frac{n!}{h!}$ is the falling factorial. We use the following inequalities 
-(TODO references \todo{references for factorial inequalities})
+(TODO references \todonit{references for factorial inequalities})
     for the falling
 factorial:
 
@@ -212,7 +214,7 @@ So that:
 \end{align*}
 
 By standard bounds on the tail of the binomial distribution,
-(TODO reference and details \todo{reference for tails of binomial distribution})
+(TODO reference and details \todonit{reference for tails of binomial distribution})
 we have that there exists a constant $C$ so that 
 $\Probsub{X \sim \text{Bin}(n, k/n)}{X < \left\lceil \frac{t}{2} \right\rceil} \geq C e^{-4\eps^2t}$.
 Rearranging, we get our desired result. 
@@ -225,10 +227,12 @@ algorithms $\A$ solving $\MAJ$ with bounded failure probability for all inputs d
 queries. 
 \end{corollary}
 \begin{proof}
-TODO \todo{prove corollary, and state it more precisely too}
+TODO \todowrite{prove corollary, and state it more precisely too}
 \end{proof}
 
 \subsection{Randomized Constructive Separation}
+
+Explain how to make a randomized constructive separation from above (amplify error probability).
 
 
 
@@ -256,5 +260,10 @@ is positive for both of those conditions.
 
 \subsection{Explicit Obstructions for $t = o(1/\eps)$}
 
+Explain that for query algorithms making $o(1/\eps)$ queries, explicit-obstructions refuters exist.
+
+\todoidea{what happens with O(1/eps)?}
+
 \subsection{Derandomization of Query Algorithms}
 
+Explain $t$-wise independent distributions and how they help when $\eps = 1/(\log n)^O(1)$. 

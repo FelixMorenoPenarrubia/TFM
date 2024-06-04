@@ -1,0 +1,195 @@
+\documentclass[12pt]{report}
+
+\usepackage{amsthm,amsmath,amssymb,amsfonts,amscd}
+\usepackage{graphicx}
+\usepackage{enumerate}
+\usepackage[all]{xy}
+\usepackage{booktabs}
+\usepackage{tikz}
+
+
+%Dissertate-inspired
+\usepackage{hyperref}
+\usepackage[capitalise]{cleveref}
+\usepackage{xcolor}
+\hypersetup{
+    colorlinks,
+    linkcolor={red!60!black},
+    citecolor={red!60!black},
+    urlcolor={blue!80!black}
+}
+%\usepackage[tiny,md,sc]{titlesec}
+\setlength{\headheight}{15pt}
+\pagestyle{plain}
+\usepackage{titling}
+\usepackage[palatino]{quotchap}
+
+\usepackage[width=6in, letterpaper]{geometry}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+
+%Thmtools
+\usepackage{thmtools}
+\usepackage{thm-restate}
+%\declaretheorem[name=Theorem]{citetheorem}
+\declaretheorem[within=chapter]{theorem}
+\declaretheorem[sibling=theorem]{lemma}
+\declaretheorem[sibling=theorem,style=definition]{definition}
+\declaretheorem[sibling=theorem]{corollary}
+\declaretheorem[style=definition, name=Open Question]{question} 
+
+%\newtheorem{theorem}{Theorem}[section]
+%\newtheorem{lemma}[theorem]{Lemma}
+%\newtheorem{proposition}[theorem]{Proposition}
+%\newtheorem{observation}[theorem]{Observation}
+%\newtheorem{conjecture}[theorem]{Conjecture}
+
+
+%\theoremstyle{definition}
+%\newtheorem{definition}[theorem]{Definition}
+%\newtheorem{example}[theorem]{Example}
+
+
+\newcommand{\eps}{\epsilon}
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\calD}{\mathcal{D}}
+\newcommand{\D}{\calD}
+\newcommand{\Prob}[1]{\text{Pr}\left[#1\right]}
+\newcommand{\Probsub}[2]{\text{Pr}_{#1}\left[#2\right]}
+\newcommand{\samplefrom}{\leftarrow}
+
+\newcommand{\complexityclass}[1]{\mathsf{#1}}
+\newcommand{\PTIME}{\complexityclass{P}}
+\newcommand{\newcomplexityclass}[1]{\expandafter\newcommand\csname #1\endcsname{\complexityclass{#1}}}
+\newcomplexityclass{EXP}
+\newcomplexityclass{E}
+\newcomplexityclass{BPP}
+\newcomplexityclass{ZPP}
+\newcomplexityclass{NP}
+\newcomplexityclass{PSPACE}
+\newcomplexityclass{AC}
+\newcomplexityclass{NC}
+\newcomplexityclass{REG}
+\newcomplexityclass{LOGSPACE}
+
+\newcomplexityclass{SIZE}
+\newcomplexityclass{DTIME}
+
+
+\newcommand{\poly}{\text{poly}}
+\newcommand{\polylog}{\text{polylog}}
+
+\newcommand{\computationalproblem}[1]{\mathrm{#1}}
+\newcommand{\PAL}{\computationalproblem{PAL}}
+\newcommand{\DISJ}{\computationalproblem{DISJ}}
+\newcommand{\MAJ}{\computationalproblem{PromiseMAJORITY}}
+\newcommand{\SAT}{\computationalproblem{SAT}}
+
+
+%Crossing Sequences
+\newcommand{\CS}{C}
+
+
+\newcommand{\emptyword}{\lambda}
+\newcommand{\concat}{\parallel}
+\newcommand{\blank}{\perp}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\algnewcommand\algorithmicinput{\textbf{Input:}}
+\algnewcommand\Input{\item[\algorithmicinput]}
+\algnewcommand\algorithmichardcode{\textbf{Hardcode:}}
+\algnewcommand\Hardcode{\item[\algorithmichardcode]}
+\algnewcommand\algorithmicprogram{\textbf{Program:}}
+\algnewcommand\Program{\item[\algorithmicprogram]}
+\algnewcommand\algorithmicoutput{\textbf{output} }
+%\algnewcommand\Output{\item[\algorithmicoutput]}
+\algnewcommand\Output{\State \algorithmicoutput}
+%\algnewcommand\algorithmicreturn{\textbf{Return}}
+%\algnewcommand\Return{\item[\algorithmicreturn]}
+\algnewcommand\algorithmichalt{\textsc{Halt}}
+%\algnewcommand\Halt{\item[\algorithmichalt]}
+\algnewcommand\Halt{\State \algorithmichalt}
+
+\algblockdefx[RepeatTimes]{RepeatTimes}{EndRepeatTimes}%
+[1]{\textbf{repeat } #1 \textbf{ times:}}%
+{\textbf{end}}
+
+\algblockdefx[CustomBlock]{CustomBlock}{EndCustomBlock}%
+[1]{#1}%
+{\textbf{end}}
+
+%Bibliography
+\usepackage[style=alphabetic]{biblatex}
+\addbibresource{references.bib}
+% Suppress DOI
+\DeclareFieldFormat{doi}{}
+% Suppress URL
+\DeclareFieldFormat{url}{}
+% Suppress the URL date; comment out if you still want to see the access date
+\DeclareFieldFormat{urldate}{}
+\DeclareFieldFormat{issn}{}
+
+
+%todonotes
+\usepackage[colorinlistoftodos]{todonotes}
+\definecolor{fadedviolet}{rgb}{1,0.8,1}
+\definecolor{fadedgreen}{rgb}{0.8,1,0.8}
+\newcommand{\todoidea}[1]{\todo[color=pink]{#1}}
+\newcommand{\todoidealp}[1]{\todo[color=fadedviolet]{#1}}
+\newcommand{\todoideahp}[1]{\todo[color=magenta]{#1}}
+\newcommand{\todowrite}[1]{\todo[color=fadedgreen]{#1}}
+\newcommand{\todowritehp}[1]{\todo[color=green]{#1}}
+\newcommand{\todopolish}[1]{\todo[color=white]{#1}}
+\newcommand{\todonit}[1]{\todo[color=gray]{#1}}
+
+
+\begin{document}
+
+\onehalfspacing
+
+\listoftodos
+
+\input{titlepage}
+
+\input{abstract}
+
+
+
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+
+\chapter{Introduction}
+
+\input{chapters/introduction}
+
+\chapter{Constructive Separations}
+
+\input{chapters/constructiveseparations}
+
+\chapter{Refuters for Query Algorithms}
+
+\input{chapters/queryalgorithms}
+
+\chapter{Refuters for One-Tape Turing Machines}
+
+\input{chapters/onetapetms}
+
+%\chapter{Refuters for Streaming Algorithms}
+
+%\input{chapters/streamingalgorithms}
+
+
+
+\newpage
+
+\printbibliography
+\end{document}
+
+

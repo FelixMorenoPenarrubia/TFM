@@ -1,0 +1,37 @@
+\Input $1^n$
+\Require $n$ even.
+\Hardcode $M$ 1-TM to be refuted. 
+\Hardcode $K \gets$ constant such that $M$ runs in $K n \log n$ steps.
+\Hardcode $s \gets$ number of states of $M$. 
+\Program
+\State $L \gets 4K \log n$
+\State \texttt{MarkedPrefixes} $\gets \{\}$
+\State \texttt{SequenceByPrefix} $\gets []$
+\RepeatTimes{$4 \cdot s^{L+1}$}
+    \State $w \gets \Call{ChoosePalindrome}{n, \texttt{MarkedPrefixes}}$
+    %\State Run $M$ on input $ww^R$
+    \CustomBlock{\textbf{run} $M$ on input $ww^R$, and set:}
+        \State $\texttt{Accepted} \gets$ result (whether $M$ accepts or not).
+        \State $\CS \gets$ crossing sequences of the execution. 
+    \EndCustomBlock
+    \If{$\texttt{Accepted}$} 
+        \For{$i \gets 1\ldots n/2$}
+            \State $p \gets w[1\ldots i]$
+            \If{$|\CS_i| \leq L$ and $p \not\in \texttt{MarkedPrefixes}$}
+                \For{$\tilde{p} \in \texttt{MarkedPrefixes}$}
+                    \If{$|\tilde{p}| = i$ and $\texttt{SequenceByPrefix}[\tilde{p}] = \CS_i$}
+                        \State $v \gets w(i\ldots n/2]$
+                        \Output $\tilde{p}vw^R$
+                        \Halt
+                    \EndIf
+                \EndFor
+                \State $\texttt{MarkedPrefixes} \gets \texttt{MarkedPrefixes} \cup \{p\}$
+                \State $\texttt{SequenceByPrefix}[p] \gets \CS_i$
+            \EndIf
+        \EndFor
+    \Else
+        \Output $ww^R$
+        \Halt
+    \EndIf
+\EndRepeatTimes
+\Halt

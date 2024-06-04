@@ -1,0 +1,873 @@
+\todowrite{Write Chapter 4}
+
+In this chapter, we will study constructive separations of the language of palindromes
+$$\PAL = \{ww^R : w \in \{0, 1\}^*\} \cup \{wbw^R : w \in \{0, 1\}^*, b \in \{0, 1\}\}$$
+from one-tape Turing machines running in time $o(n^2)$. In \cite{ConstructiveSeparations}
+it was proved that constructive separations against nondeterministic machines yielded
+breakthrough results in circuit lower bounds (recall \cref{thm:csrefutertm}). In this chapter
+we will explore this setting more deeply, and explain when we can get circuit lower bounds, 
+when we can actually get constructive separations, and even when we can prove that no 
+constructive separations can exist. 
+
+For simplicity, through the chapter we will often only consider the language 
+of \emph{even} palindromes $\{ww^R : w \in \{0, 1\}^*\}$ in the proofs. 
+Recall that in \todonit{reference to definition of refuter} we only require
+that the refuter works
+for infinitely many values of $n$, so in particular a refuter that only works for
+even palindromes and ignores the odd case is valid. However, the arguments that
+we make for the even case in this chapter can always be modified slightly to 
+work for the odd case too. We omit the explanations of which particular changes 
+would be necessary for each of our results for brevity, since they are rarely
+illuminating. 
+
+%and, as we have said, it is often not necessary to consider the 
+%odd case to reach the desired conclusion. 
+
+
+\section{Lower Bounds Against 1-TMs for $\PAL$}
+
+In this section, we prove the $\Omega(n^2)$ lower bound for 1-TMs computing $\PAL$,
+due to Hennie \cite{Hennie65}. The proof of this fact lends itself to a simple
+\emph{probabilistic} constructive separation that we also discuss. 
+
+\subsection{Crossing Sequences and Lower Bounds}
+
+\todo{figure indexing wrt to how input is written in the tape}
+
+\begin{definition}
+Let $M$ be a 1-TM, and let $E = ((q_1, p_1), (q_2, p_2), \dots, (q_t, p_t))$, 
+with $(q_i, p_i) \in Q \times \mathbb{Z}$, be a sequence describing an execution of
+$M$, that is, $E$ is the sequence of states and positions of the tape head of $M$ when
+it is executed on some input and (possibly) with some given non-deterministic choices.
+The \emph{crossing sequence at position $i$}, denoted by $\CS_i(E)$,
+is the sequence of states for 
+which the tape head crosses from position $i$ to position $i+1$ or vice versa; that is, the
+sequence of states $q_j$
+such that $p_{j-1} = i$ and $p_{j} = i+1$ or $p_{j-1} = i+1$ and $p_j = i$. 
+
+If $M$ is a deterministic 1-TM and $x \in \{0, 1\}^*$, we denote by $\CS_{M,i}(x)$ 
+the crossing sequence at position $i$ of the execution of $M$ on input $x$. 
+
+If $M$ is a non-deterministic 1-TM, $x \in \{0, 1\}^*$ and $b \in \{0, 1\}^*$ is a 
+sequence of non-deterministic choices for the execution of $M$ with input $x$,
+we denote by $\CS_{M,i}(x, b)$ the crossing sequence at position $i$ of the execution of $M$ on
+input $x$ with non-deterministic choices $b$.
+
+%If $M$ is a non-deterministic 1-TM and $x \in \{0, 1\}^*$ is a word accepted by $M$, we
+%will denote by $\CS_i(x)$ the crossing sequence at position $i$ of the lexicographically smallest
+%accepting execution of $M$ on $x$. 
+\end{definition}
+
+\begin{figure}
+\label{fig:crossingsequences}
+\missingfigure{crossing sequences}
+\end{figure}
+
+When the 1-TM $M$ is clear from context, we will usually write $\CS_i(x)$ instead of $\CS_{M,i}(x)$.
+Also, for a non-deterministic 1-TM $M$ and an accepted word $x$, 
+we will usually write just $\CS_i(x)$, omitting the description of 
+the non-deterministic choices, to refer to the crossing sequence at position $i$ on input $x$
+for \emph{some} accepting execution of $x$. That is, for each accepted word $x$, we arbitrarily choose
+some accepting execution (e.g. the lexicographically smallest one), and use $\CS_i(x)$ to refer to the
+crossing sequences of that execution. This is because, for the purposes of proving lower bounds for $\PAL$,
+the fact that there might be multiple executions (and therefore multiple crossing sequences) for each accepted
+word does not hurt, and we can prove the lower bounds only assuming that each accepted word has \emph{at least}
+one accepting execution.
+
+Intuitively, crossing sequences are a way to quantify the way a machine ``carries information'' from one
+side of the boundary to the other one via its internal states. Note that, in a crossing sequence at position
+$i \geq 1$, each odd crossing is from left to right
+and each even crossing is from right to left. 
+See \cref{fig:crossingsequences} for a pictorial depiction of 
+crossing sequences.
+
+\begin{lemma}
+    \label{lem:pastingcs}
+    Let $a = a_1\ldots a_i a_{i+1} \ldots a_n$ and $b = b_1 \ldots b_i b_{i+1} \ldots b_m$ 
+    be two words accepted by a 1-TM $M$ so that $\CS_i(a) = \CS_i(b)$.
+    Then the word  $c = a_1\ldots a_i b_{i+1} \ldots b_m$ is also accepted by $M$.
+\end{lemma}
+\begin{proof}
+Let $E^a = ((q^a_1, p^a_1), \ldots (q^a_{t^a}, p^a_{t^a}))$ be the accepting execution for $a$ in $M$ and let
+$E^b = ((q^b_1, p^b_1), \ldots (q^a_{t^b}, p'_{t^b}))$ be the accepting execution for $b$. 
+Let $j^a_1, j^a_2, \ldots, j^a_{|\CS_i(a)|}$ and $j^b_1, j^b_2, \ldots, j^b_{|\CS_i(a)|}$ be the indices
+corresponding to the states in $\CS_i(a)$ in $E^a$ and $E^b$, respectively.
+
+We can define a new execution $E^c$ by reproducing the execution $E^a$ up to index $j^a_1$, then the execution
+$E^b$ between indices $j^b_1$ and $j^b_2$, and so on:
+\begin{multline*}
+E^c = ((q^a_1, p^a_1), \ldots, (q^a_{j^a_1-1}, i), (q^b_{j^b_1}, i+1), (q^b_{j^b_1+1}, p^b_{j^b_1+1}), \ldots, \\
+(q^b_{j^b_2-1}, i+1), (q^a_{j^a_2}, i), (q^a_{j^a_2+1}, p^a_{j^a_2+1}), \ldots ).
+\end{multline*}
+See \cref{fig:pastingcs} for an illustration of execution $E^c$. It is not difficult to see that $E^c$ is a 
+valid accepting execution for $M$ on input $c$, since the machine behaves as if it were reading input $a$ to the left
+of index $i$ and as if it were reading input $b$ to the right of index $i$. 
+
+\end{proof}
+
+\begin{figure}
+    \label{fig:pastingcs}
+    \missingfigure{pasting together different executions}
+    \caption{Illustration of \cref{lem:pastingcs}.}
+\end{figure}
+
+\begin{corollary}
+    \label{cor:crosscollision}
+    Let $M$ be a 1-TM that accepts two palindromes $w_1 w_2 w_2^R w_1^R$ and
+    $w_3 w_4 w_4^R w_3^R$ with $|w_1| = |w_3| > 0$, $|w_2| = |w_4|$, and $w_1 \neq w_3$. 
+    If the $\CS_{|w_1|}(w_1 w_2 w_2^R w_1^R) = \CS_{|w_1|}(w_3 w_4 w_4^R w_3^R)$, 
+    then $M$ also accepts a non-palidrome of length $2|w_1| + 2|w_2|$.
+\end{corollary}
+\begin{proof}
+By \cref{lem:pastingcs}, the non-palindrome $w_1 w_4 w_4^R w_3^R$ is accepted. 
+\end{proof}
+
+Now we are ready to prove the $\Omega(n^2)$ lower bound for $\PAL$. We will prove a quantitative
+bound, which will be useful for our randomized constructive separation:
+
+\todopolish{check that coefficients are updated everywhere}
+\begin{theorem}
+\label{thm:palindromebound}
+Let $M$ be a non-deterministic 1-TM running in time $T(n)$ with $s$ states
+that rejects every non-palindrome.
+Then, for every even $n$, the number of palindromes of length $n$ accepted by $M$ is
+bounded by $2^{\frac{(4 \log s) T(n)}{n} + \frac{n+6}{4}}$.
+\end{theorem}
+\begin{proof}
+Let $P_n$ be the set of palindromes of length $n$ accepted by $M$. 
+
+Let $$\ell_i = \frac{1}{|P_n|} \sum_{p \in P_n} |\CS_i(p)|$$ be the average length of the
+crossing sequence at position $i$ on the tape for all palindromes in $P_n$.
+By Markov's inequality, there are at least $\frac{1}{2}|P_n|$ palindromes $p$
+from $P_n$ for which $|C_i(p) \leq 2\ell_i$.
+Now, fix $i \in [1, n/2]$ and note that:
+
+\begin{itemize}
+    \item There are $1 + s + \dots + s^{2\ell_i} < 2s^{2\ell_i}$ crossing sequences
+    at position $i$
+    of length at most $2\ell_i$, where $s$ is the number of states in $M$.
+    \item There can be at most $2^{n/2-i}$ palindromes in $P_n$ with the same crossing sequence
+    at position $i$,
+    since in the decomposition $p = w_1 w_2 w_2^R w_1^R$ with $|w_1| = i$,
+    the prefix
+    $w_1$ must be the same for all such palindromes because of \cref{cor:crosscollision}
+    and the assumption that $M$ rejects every non-palindrome. 
+\end{itemize}
+
+Therefore:
+
+$$
+\frac{1}{2}|P_n| < 2 s^{2\ell_i} \cdot 2^{n/2-i}.
+$$
+
+Rearranging: 
+
+\begin{equation}
+\ell_i > \frac{\log |P_n| + i - n/2 - 2}{2 \log s}.
+\label{previneqpal}
+\end{equation}
+
+For each palindrome $p \in P_n$, we have that $\sum_{i=1}^{n/2} \CS_i(p) \leq T(n)$, so
+
+$$
+\sum_{i=1}^{n/2} \ell_i = \frac{1}{|P_n|} \sum_{i=1}^{n/2} \sum_{p \in P_n} |\CS_i(p)| = \frac{1}{|P_n|} \sum_{p \in P_n} \sum_{i=1}^{n/2} |\CS_i(p)|  \leq T(n)
+$$
+
+Hence, summing over all $i$ in \eqref{previneqpal}:
+
+$$
+T(n) > \sum_{i=1/}^{n/2} \frac{\log |P_n| + i - n/2 - 2}{2 \log s} = \frac{1}{2\log s} \left( \frac{n}{2} \log |P_n| - \frac{n^2}{8} -\frac{3n}{4} \right) 
+$$
+
+%So:
+
+%$$
+%\frac{(4 \log s) (T(n)+n/2)}{n} + \frac{n+6}{4} > \log |P_n|
+%$$
+
+And therefore:
+
+$$
+2^{\frac{(4 \log s) T(n)}{n} + \frac{n+6}{4}} > |P_n|
+$$
+
+As desired. 
+
+    
+\end{proof}
+
+\begin{corollary}
+Every non-deterministic 1-TM recognizing $\PAL$ must run in $\Omega(n^2)$ time.
+\end{corollary}
+\begin{proof}
+Such a machine $M$ rejects every non-palindrome, so we can apply \cref{thm:palindromebound} to get that
+$2^{\frac{(4 \log s) T(n)}{n} + \frac{n+6}{4}} \geq 2^{n/2}$, so $T(n) \geq \frac{n(n-6)}{16 \log s} = \Omega(n^2)$.
+%where $s$ is the number of states of the machine.
+\end{proof}
+
+
+
+\subsection{Randomized Constructive Separation}
+
+We prove the following: 
+
+\begin{theorem}
+    \begin{itemize}
+    \item There is a $\ZPP^\NP$-constructive separation of $\PAL$ from nondeterministic 1-TMs 
+    running in time $o(n^2)$. 
+    \item There is a $\BPP$-constructive separation of $\PAL$ from nondeterministic 1-TMs 
+    running in time $o(n^2)$ which
+    are promised to accept only palindromes. 
+    \end{itemize}
+\end{theorem}
+
+Let $M$ be the non-deterministic Turing machine running in time $o(n^2)$ we are trying to refute, 
+and let $M(x, b)$ be the result of the execution of $M$ on input $x$ and non-deterministic choices $b$.
+Our refuter $R$ does the following on input $1^n$:
+
+\begin{itemize}
+	\item Uses the $\NP$ oracle to determine the truth of the statement 
+	$$\exists x \in \{0, 1\}^n \exists b \in \{0, 1\}^{\leq n^2} : x \not\in \PAL \wedge M(x, b) \text{ accepts}.$$ 
+	\begin{itemize}
+	\item If it is true, it performs a standard search-to-decision 
+	reduction with the $\NP$ oracle to determine such an $x$, and outputs $x$.
+	\item Otherwise, it chooses a uniformly random palindrome of length $n$ and outputs it. 
+    %(If $n$ is odd, it outputs anything and halts).
+	\end{itemize}
+\end{itemize}
+
+In the first case, it is clear that $R$ outputs a counterexample for $M$. 
+In the second case, we have that $M$ does not accept any non-palindrome of length $n$, so
+by \cref{thm:palindromebound} it also rejects a fraction which goes to $1$ when $n \rightarrow \infty$
+of palindromes of length $n$, 
+so the probability of outputting a counterexample will be greater than $2/3$ for sufficiently large $n$.
+
+Thus, we have a $\BPP^\NP$-constructive separation. In fact, it can be made $\ZPP^\NP$-constructive,
+since we can verify the output to be a counterexample.
+%but we will not insist in this distinction.
+Also note that the refuter as stated (without performing verification of the output)
+uses randomness and the $\NP$ oracle in a completely ``disjoint'' way:
+in the case where the machine $M$ accepts a non-palindrome, it proceeds in a deterministic,
+``$\PTIME^\NP$'' way, while in the case where the machine $M$ only accepts palindromes
+it just outputs a random palindrome without using the $\NP$ oracle.
+This differentiated behavior is of interest because, as we will see in the following sections,
+there are different consequences for constructive separations from 1-TMs which are promised
+to accept only palindromes and for constructive
+separations from 1-TMs which are promised to accept all palindromes. 
+
+
+
+\section{Constructive Separations Imply Circuit Lower Bounds}
+
+Recall that in \cite{ConstructiveSeparations}, the following is proved:
+
+\thmcsrefutertm*
+
+We will reproduce the proof argument here, but with some modifications to suit our
+purposes better. First, we prove the result with more generality, with the circuit lower 
+bound we obtain being parametrized by the time complexity of the refuter, and not just
+stated in two discrete cases for $\PTIME$ and $\PTIME^\NP$ (we will not discuss results about space complexity). 
+This more granular statement will be 
+useful to compare the result with the refuters we obtain in \cref{sec:refuteragainstweaker}.
+
+Second, we emphasize in the statement that it is enough to have refuters against 1-TMs which
+are promised to accept only palindromes, that is, that reject for every non-palindrome. 
+This turns out to be an important aspect, because as we will see in \cref{sec:cryptotm}, no
+$\PTIME$-constructive separation is possible even against deterministic 1-TMs running in time
+$O(n^{1+\eps})$ assuming the existence of a cryptographic primitive. Thus, the second and third 
+bullet points of \cref{thm:csrefutertm}, as stated in \cite{ConstructiveSeparations}, are 
+vacuous under this cryptographic assumption. By introducing this strengthening, we can still
+hope to find such constructive separations even if we believe that the cryptographic primitive exists. 
+
+\begin{theorem}
+    \label{thm:refutertm}
+    Let $\{T_i(n)\}_{i \in \mathcal{I}}$ be a family of functions, let $\mathcal{O}$ be any language
+    and let $\mathcal{C}^\mathcal{O}$ denote the class of algorithms
+    running in time $T_i(n)$ for some $i \in \mathcal{I}$ with oracle access to $\mathcal{O}$. 
+    Let $f(n)$ be a function with $f(n) = \Omega(\log n)$ and $f(n+1) = O(f(n))$.
+    If there is a $\mathcal{C}^\mathcal{O}$-constructive separation of $\PAL$ from
+    1-NTMs promised to accept only palindromes running in time $O(n \cdot f(n))$, then 
+    $$\bigcup_{i\in \mathcal{I}} \DTIME[T_i(2^n)]^{\mathcal{O}} \not\subset \SIZE[f(2^{n/2})^\delta]$$
+    for some universal constant $\delta > 0$.  
+\end{theorem}
+\begin{proof}
+Assume that $\bigcup_{i\in \mathcal{I}} \DTIME[T_i(2^n)]^{\mathcal{O}} \subseteq \SIZE[f(2^{n/2})^\delta]$. 
+By \cref{lem:circuitbinarytounary}, the output of any refuter $R \in \mathcal{C}^\mathcal{O}$ has circuit complexity
+$O(f(n+1)^\delta) = O(f(n)^\delta)$. We will construct a 1-NTM $M$ running in time $O(n \cdot f(n))$
+that works correctly on the output of any such refuter, proving the contrapositive of the desired statement. 
+First, $M$ guesses a circuit $C$ of size $s = O(f(n)^\delta)$ and writes its description around the beginning of the tape.
+Then, $M$ verifies that the circuit generates the input $x$ by moving the circuit and a counter through the tape
+and checking that $C(i) = x_i$. Finally, $M$ checks that $C(i) = C(n-i+1)$ for all $1 \leq i \leq n/2$, verifying that
+the input is indeed a palindrome. Moving the circuit through the input can be done in time $O(n \cdot (\log n + s))$ and each
+of the $O(n)$ evaluations of the circuit can be done in time $O(s^{O(1)})$, so if $\delta$ is small enough the total
+time complexity is $O(n \cdot f(n))$. 
+\end{proof}
+
+\begin{corollary}
+The following hold:
+\begin{itemize}
+    \item A $\PTIME^{\NP}$-constructive separation of $\PAL$ from nondeterministic $O(n^{1.1})$ time
+    one-tape Turing machines promised to accept only palindromes implies $\E^{\NP} \not \subset \SIZE[2^{\delta n}]$ for some constant $\delta >0$.
+	    
+    \item A $\PTIME$-constructive separation of $\PAL$ from nondeterministic $O(n^{1.1})$ time
+    one-tape Turing machines promised to accept only palindromes implies $\E \not \subset \SIZE[2^{\delta n}]$ for some constant $\delta >0$.
+\end{itemize}
+\end{corollary}
+\begin{proof}
+Take $\mathcal{I} = \mathbb{N}$, $T_i(n) = n^i$, $f(n) = n^{0.1}$ and $\mathcal{O} = \SAT$ or $\mathcal{O} = \emptyset$ (respectively) in \cref{thm:refutertm}.
+\end{proof}
+
+Interestingly, those lower bounds for $\E^{\NP}$ and $\E$ are precisely the ones that are needed for derandomization of
+algorithms:
+
+\begin{theorem}[\cite{NW94, IW97}] 
+    \label{thm:nisanwigderson}
+    \begin{itemize}
+    \item If $\E \not\subset \SIZE[2^{\delta n}]$, then there exists a pseudorandom generator $G : \{0, 1\}^s \to \{0, 1\}^n$,
+    with $n = 2^{\Omega(s)}$ running in time $2^{O(s)}$ which fools circuits of size $n^3$.
+    In particular, this implies $\BPP = \PTIME$. 
+    \item If $\E^{\NP} \not\subset \SIZE[2^{\delta n}]$, then there exists a pseudorandom generator $G : \{0, 1\}^s \to \{0, 1\}^n$,
+    with $n = 2^{\Omega(s)}$ running in time $2^{O(s)}$ with an $\NP$ oracle which fools circuits of size $n^3$.
+    In particular, this implies $\BPP \subseteq \PTIME^\NP$. 
+    \end{itemize}
+\end{theorem}
+
+Therefore, deterministic constructive separations of $\PAL$ from $O(n^{1+\eps})$ time 1-NTMs imply breakthrough results in
+derandomization. At the same time, such deterministic constructive separations could be obtained by derandomizing the
+probabilistic constructive separation of the previous section. The difference here between the two kinds of derandomization
+is that in the second case we would need to have pseudorandom generators against \emph{nondeterministic} machines, which 
+is a stronger requirement than the generators against deterministic circuits provided by \cref{thm:nisanwigderson}.
+
+On the other hand, our generator only needs to fool nondeterministic one-tape machines running in $O(n^{1+\eps})$ time, 
+which is a much weaker model than general non-deterministic polynomial-size circuits. In this setting, a pseudorandom
+generator with seed length $\tilde{O}(\sqrt{T})$ against \emph{deterministic} 1-TMs running in time $O(T)$ is known 
+\cite{Impagliazzo94}. Also, while the generators of \cref{thm:nisanwigderson} and \cite{Impagliazzo94} fool all 
+$n^3$-size circuits and $O(T)$-time 1-DTMs respectively, our generator can be \emph{targeted}, that is, it can depend
+on which TM $M$ we are trying to fool. And it does not need to be a full pseudorandom generator in the sense of 
+indistinguishability from randomness; it can be a ``hitting set generator'' \cite{Andreev98} which generates at least
+one element outside the square-root-sized set defined by \cref{thm:palindromebound}. All in all, it is not clear
+that the requierements to derandomize our constructive separation are much stronger than the results of 
+\cref{thm:nisanwigderson} by achieving it. 
+
+\begin{question}
+    What are the relationships between constructive separations of $\PAL$ from 1-NTMs, (targeted) derandomization/hitting sets
+    of $O(n^{1+\eps})$ 1-NTMs, and derandomization of deterministic machines/circuits? 
+    Can we find some sort of equivalence between them, or evidence than one of them is harder than the others? 
+\end{question}
+
+
+
+
+\section{Strongly Constructive Separations Do Not Exist Under Cryptographic Assumptions}
+\label{sec:cryptotm}
+
+In this section, we will see that $\BPP$-constructive separations of $\PAL$ against $O(n^{1+\eps})$ 1-TMs do not exist if we assume
+the existence of a certain cryptographic primitive. To show this, we will use an idea from \cite{Oliveira24}, where it is used 
+to show that lower bounds for 1-TMs against palindromes can not be proved in certain theories of weak arithmetic. Here we 
+will reproduce their argument, adapting it to our setting.
+
+The cryptographic primitives we will be using are \emph{keyless collision-resistant hash functions}.
+
+\begin{definition}[Keyless Collision-Resistant Hash Function] A keyless collision-resistant hash
+function with hash value length $m = m(n) < n$ is a deterministic polynomial-time
+function $h \colon \{0, 1\}^n \to \{0, 1\}^m$ such that for every uniform probabilistic polynomial-time adversary
+$\A$ and every $n$, we have
+$$\Prob{\A(1^n)  \text{ outputs } \langle x_1, x_2 \rangle \text{ such that } x_1 \neq x_2 \text{ and } h(x_1) = h(x_2)} \leq \eps(n)$$ 
+where $\eps(n)$ is a \emph{negligible} function (that is, $\eps(n) = 1/n^{\omega(1)}$).
+\end{definition}
+
+The idea is that, if we have a TM that hashes the left half and the reverse of the right half of a palindrome and accepts if they are equal, a
+refuter against this TM needs to find collisions in the hash function, which is supposed to be difficult. The main question here is whether
+we can implement this in a one-tape TM running in time $O(n^{1+\eps})$, only assuming the existence of polynomial-time hash functions $h$.
+
+The answer is yes: we can do it using a technique from cryptography known as the \emph{Merkle-Damgård construction} \cite{Merkle90, Damgard90}.
+
+\begin{theorem}
+\label{thm:hashonetape}
+Suppose there exist keyless collision-resistant hash functions. Then, for all $0 < \delta, \eps < 1$, there exists a keyless collision resistant hash
+function $H = H_{\delta, \epsilon}$ with hash value length $m < n^\delta$ which can be computed in time $O(n^{1+\eps})$ in a one-tape
+TM.
+\end{theorem}
+
+\begin{proof}
+Let $h$ be a keyless collision-resistant hash function, computable in time $O(n^k)$ in a 1-TM for some $k$.
+Without loss of generality, we can assume that $h$ has hash value length $n-1$ (we can always arbitrarily
+pad the output values mantaining collision resistance). Given an input size $n$, 
+let $m = m(n) = \min\{\lfloor n^\delta \rfloor,  \lfloor n^{\eps/k} \rfloor \}$ and define the following sequence of hash functions:
+
+\todowrite{consistent notation for concatenation, also explain in introduction}
+
+\begin{itemize}
+    \item $H_0 \colon \{0, 1\}^m \to \{0, 1\}^{m-1}$: $H_0(x) = h(x)$.
+    \item $H_1 \colon \{0, 1\}^{m+1} \to \{0, 1\}^{m-1}$: $H_1(x \concat b) = h(H_0(x) \concat b)$.
+    \item $\dots$
+    \item $H_i \colon \{0, 1\}^{m+i} \to \{0, 1\}^{m-1}$: $H_i(x \concat b) = h(H_{i-1}(x) \concat b)$.
+    \item $\dots$
+    \item $H_{n-m} \colon \{0, 1\}^{n} \to \{0, 1\}^{m-1}$: $H_{n-m}(x \concat b) = h(H_{n-m-1}(x) \concat b)$.
+\end{itemize}
+
+%See \cref{fig:merkledamgard} for a pictorial depiction. 
+
+\todowrite{figure? (maybe)}
+
+Take $H = H_{n-m}$. We have to prove that $H$ is a collision-resistant hash function, and that it can be
+computed in time $O(n^{1+\eps})$ in a 1-TM. 
+
+We prove by induction on $i$ that all the functions $H_i$ are collision-resistant. For the base case $i = 0$, 
+$H_0 = h$ and it is collision-resistant by assumption. For the induction step, assuming $H_{i-1}$ is
+collision-resistant we will prove $H_i$ is collision-resistant too. 
+Note that a pair $\langle x_1 \concat b_1 , x_2 \concat b_2 \rangle$ is a collision for $H_i$ if and only if either:
+
+\begin{itemize}
+    \item $\langle x_1, x_2 \rangle$ is a collision for $H_{i-1}$.
+    \item $\langle H_{i-1}(x_1) \concat b_1, H_{i-1}(x_2) \concat b_2 \rangle$ is a collision for $h$.
+\end{itemize}
+
+Let $\A$ be any probabilistic polynomial-time algorithm, and let $\A_1$ and $\A_2$ be the corresponging probabilistic
+polynomial-time algorithms that run $\A$ and transform an output of the form $\langle x_1 \concat b_1 , x_2 \concat b_2 \rangle$ 
+to $\langle x_1, x_2 \rangle$ and $\langle H_{i-1}(x_1) \concat b_1, H_{i-1}(x_2) \concat b_2 \rangle$, respectively 
+(note that $H_{i-1}$ can be computed in polynomial time). Then:
+\begin{multline*}
+\Prob{\A(1^n)  \text{ outputs } \langle x_1 \concat b_1, x_2 \concat b_2 \rangle \text{ collision for } H_i}
+\leq \Prob{\A_1(1^n) \text{ outputs } \langle x_1, x_2 \rangle \text{ collision for } H_{i-1}} \\
++ \Prob{\A_2(1^n)  \text{ outputs }  \langle H_{i-1}(x_1) \concat b_1, H_{i-1}(x_2) \concat b_2 \rangle \text{ collision for } h} 
+\leq \eps_1(n) + \eps_2(n) 
+\end{multline*} 
+
+Where $\eps_1(n)$ and $\eps_2(n)$ are negligible functions, by the hypothesis. Therefore, the probability that $\A$ outputs a 
+collision for $H_i$ is also negligible, as desired. 
+
+Now we describe how to compute the function in a one-tape TM in time $O(n^{1+\eps})$:
+
+First, we compute $n = |x|$, the length of the input. We iterate through the input from left to right,
+keeping a counter near the head in a ``separate track'' from the input 
+(using a larger tape alphabet). \todowrite{Explain this better? In the introduction?} 
+The counter has at most $\log n$ bits and so updating it and moving it to the right takes
+$O(\log n)$ time, for a total complexity of $O(n \log n)$. 
+
+Second, we compute $m$ and we put a mark on the $m$-th character.
+Computing $m$ given $n$ in binary can be done in $\polylog(n)$ time, since
+$\eps$ and $\delta$ are fixed rational numbers, and mantaining a counter until the $m$-th character can
+be done in $O(m \log m) = O(n)$, for a total complexity of $O(n)$ for this step. 
+
+Third, we compute the hash value in a process with $n-m+1$ steps. The $i$-th step ($0 \leq i \leq n-m$) is 
+as follows:
+
+\begin{enumerate}
+    \item At the beginning, the tape contains $H_{i-1}(x[1 \ldots m-1+i])$, followed by the $m+i$-th 
+    charcater of $x$ with a mark on it, followed by the remaining characters of $x$. (For convenience,
+    we let $H_{-1}$ be the identity function, so that this is also true for $i = 0$).
+    \item We scan the tape, find the marked character, move the mark to the right and copy the value 
+    $H_{i-1}(x[1 \ldots m-1+i]) \concat x[m+i]$ into a separate track. 
+    \item We compute $h(H_{i-1}(x[1 \ldots m-1+i]) \concat x[m+i]) = H_i(x[1 \ldots m+i])$ in a the separate
+    track, cleaning it after the execution.
+    \item We copy the value of $H_i(x[1 \ldots m+i])$ back into the main track, so that the tape now contains
+    $H_{i}(x[1 \ldots m+i])$, followed by the $m+i+1$-th character with a mark, followed by the rest of characters.
+\end{enumerate}
+
+After $n-m+1$ steps, we have the value of $H_{n-m}(x)$ in the tape, as desired. Copying the values from one
+track to the other can be done in $O(m)$ time; the most expensive part of one step is computing $h$, which 
+is done in $O(m^k)$ time. Therefore, the total time complexity is $O(n \cdot m^k) = O(n^{1+\eps})$. 
+
+
+
+\end{proof}
+
+%\begin{figure}
+%    \label{fig:merkledamgard}
+%    \missingfigure{merkle-damgard construction}
+%    \caption{Merkle-Damgård construction.}
+%\end{figure}
+
+\begin{theorem}
+    \label{thm:nobppseparation}
+    Assuming the existence of keyless collision-resistant hash functions, there does not exist a 
+    $\BPP$-constructive separation of $\PAL$ against 1-DTMs running in time $O(n^{1+\eps})$ for any $\eps > 0$.
+\end{theorem}
+
+\begin{proof}
+Construct a machine $M$ that computes the hash function $H = H_{\eps, \eps}$ of \cref{thm:hashonetape} on the first
+half on the input and on the reverse of the second half of the input, and accepts if they are equal. Note that dividing the 
+input into two halves can be done in $O(n \log n)$, and that the computation of $H$ can be done on the reverse of
+the second half without needing to explicitly write the reverse of the second half of the tape. Comparing the 
+two hashes can be done in $O(mn) = O(n^{1+\eps})$, so the machine $M$ runs in time $O(n^{1+\eps})$. 
+
+Any counterexample against $\PAL$ for $M$ must be of the form $x_1 x_2^R$ or $x_1 b x_2^R$,
+where $x_1 \neq x_2$ and $\langle x_1, x_2 \rangle$ is a collision for $H$.
+Thus, any polynomial-time refuter $R$ that outputs counterexamples against $M$ can be transformed into an 
+efficient adversary that outputs collisions for $H$, contradicting that $H$ is collision-resistant. 
+\end{proof}
+
+Note that the machine $M$ we constructed accepts all palindromes (and therefore fails only on non-palindromes), so
+\cref{thm:nobppseparation} applies to $\BPP$-constructive separations against 1-TMs promised to fail only on non-palindromes.
+This offers an interesting contrast with \cref{thm:refutertm}: refuting 1-NTMs promised to fail only on palindromes proves
+circuit lower bounds, while refuting 1-TMs promised to fail only on non-palindromes proves non-existence of cryptographic
+primitives, which is an ``upper bound''.
+
+
+
+
+\section{Constructive Separations Against Weaker 1-TMs}
+\label{sec:refuteragainstweaker}
+
+One can wonder whether the results of \cref{thm:refutertm} are ``tight'', in the sense of requiring the minimal possible assumptions
+on the hypotheses (such as the resources used by the one-tape TMs being refuted) in order to obtain a breakthrough result via a constructive
+separation. It would be interesting to find refuters when each of the hypotheses are slightly weakened, in order to establish a ``threshold''
+result which sets a dividing line between the situations where refuters can be found and the situations where proving the existence of
+refuters is as hard as major open problems.
+
+In this section, we show that indeed there exist such refuters for certain weakenings of the hypotheses of \cref{thm:refutertm}.
+
+\subsection{Refuters Against $o(n \log n)$-time 1-TMs}
+
+The most natural weakening of the hypotheses of \cref{thm:refutertm} is to consider deterministic 1-TMs rather than non-deterministic ones,
+since they are a more natural model of computation, and to consider deterministic refuters for them. The results of the above 
+section show that we can not hope to find such refuters against $O(n^{1+\eps})$-time machines, but we can wonder what happens with, say,
+$O(n)$-time machines. 
+
+It turns out that even nondeterministic $O(n)$-time (even $o(n \log n)$-time) one-tape machines are very limited in computational power,
+which allows us to obtain simple deterministic refuters for nondeterministic machines. 
+
+\begin{theorem}[\cite{Hartmanis68}]
+Any language recognized by a 1-NTM running in $o(n \log n)$ time is regular.
+\end{theorem}
+
+\begin{theorem}
+\label{thm:regularrefuter}
+There is a $\PTIME$-constructive separation of $\PAL$ against $o(n \log n)$-time 1-NTMs. 
+\end{theorem}
+
+As usual, for simplicity we will focus only on refuting for even $n$. To construct the refuter, we first show that
+``the first half'' of the counterexamples are generated by finite automata:
+
+\todowrite{Write in introduction notation used for automata.}
+
+\begin{lemma}
+\label{lem:regularlang}
+Given $L \in \REG$ over any alphabet $\Sigma$, the following languages are also regular:
+\begin{enumerate}
+    \item $L_1 := \{w : ww^R \in L\}$.
+    \item $L_2 := \{w : \exists \tilde{w} \in \Sigma^*, |w| = |\tilde{w}|, w \neq \tilde{w}, w\tilde{w}^R \in L\}$.
+\end{enumerate}
+\end{lemma}
+\begin{proof}
+Let $A(L) = (Q^0, q^0_0, \delta^0, S^0)$ be the DFA for $L$.
+
+We construct the DFA $A(L_1) = (Q^1, q^1_0, \delta^1, S^1)$ for $L_1$ by setting
+\begin{gather*}
+Q^1 = Q^0 \times 2^{Q^0}, \\ q_0^1 = (q_0^0, S^0), \\ S^1 = \{(q, S) : q \in S\}, \\
+\delta^1((q, S), x) = (\delta^0(q, x), \{q' : \delta^0(q', x) \in S\}).
+\end{gather*}
+
+Informally, we are simulating the DFA $A(L)$, but each time a character is read we are also ``moving'' the set of accepting states
+in the inverse direction of the transitions. 
+
+We can easily verify by induction that the following property is satisfied: $A(L_1)$ is in state $(q, S)$ after reading word $w$ if and only if
+$A(L)$ is in state $q$ after reading $w$ and $S$ is the set of states $s$ that satisfy that, if $A(L)$ reads $w^R$ starting at state $s$, then it
+ends in an accepting state in $S^0$. As a corollary, $A(L_1)$ accepts $w$ if and only if $A(L)$ accepts $ww^R$, as desired. 
+
+We construct the NFA $A(L_2) = (Q^2, q^2_0, \delta^2, S^2)$ for $L_2$ by setting
+\begin{gather*}
+Q^2 = Q^0 \times 2^{Q^0} \times \{0, 1\}, \\ q_0^2 = (q_0^0, S^0, 0), \\ S^2 = \{(q, S, 1) : q \in S\}, \\
+\delta^2((q, S, 0), x) = \{(\delta^0(q, x), \{q' : \delta^0(q', x) \in S\}, 0), (\delta^0(q, x), \{q' : \exists y \neq x \, \delta^0(q', y) \in S\}, 1)\}, \\
+\delta^2((q, S, 1), x) = \{(\delta^0(q, x), \{q' : \exists y \, \delta^0(q', y) \in S\}, 1)\}.
+\end{gather*}
+
+Informally, we simulate the DFA $A(L)$ as before, but this time the word $\tilde{w}$ we are reading ``backwards'' (by moving the set of 
+accepting states) needs to be different from the word $w$ we are reading forwards, so we divide the states in two stages depending on 
+whether there is already at least one different character in the partial words $w$ and $\tilde{w}$ or not. 
+
+The invariant property that is satisfied in this case is:
+
+\begin{itemize}
+    \item  $A(L_2)$ can reach state $(q, S, 0)$ after reading word $w$ if and only if
+    $A(L)$ is in state $q$ after reading $w$ and $S$ is the set of states $s$ that satisfy that, if $A(L)$ reads $w^R$ starting at state $s$,
+    then it ends in an accepting state in $S^0$, and
+    \item $A(L_2)$ can reach state $(q, S, 1)$ after reading word $w$ if and only if
+    $A(L)$ is in state $q$ after reading $w$ and $S$ is the set of states $s$ that satisfy that, 
+    there exists $\tilde{w} \in \Sigma^*, |w| = |\tilde{w}|, w \neq \tilde{w}$ so that if $A(L)$ reads $\tilde{w}^R$ starting at state $s$,
+    then it ends in an accepting state in $S^0$.
+\end{itemize}
+
+This implies that there is an accepting execution for $w$ in $A(L_2)$ if and only if there exists
+$\tilde{w} \in \Sigma^*, |w| = |\tilde{w}|, w \neq \tilde{w}$ so that $A(L)$ accepts $w\tilde{w}^R$, as desired. 
+
+
+\end{proof}
+
+
+\begin{proof}[Proof of \cref{thm:regularrefuter}]
+Let $L \in \REG$ be the language recognized by the 1-NTM. By \cref{lem:regularlang}, the languages 
+$L_1 := \{w : ww^R \not\in L\}$ and $L_2 := \{w : \exists \tilde{w} \in \Sigma^*, |w| = |\tilde{w}|, w \neq \tilde{w}, w\tilde{w}^R \in L\}$
+are also regular. We assume we have access to the automata $A_{L_i}$ recognizing those languages. Note that these automata are of size $O(1)$.
+
+%On input $1^n$ with $n$ even, our refuter does the following:
+
+%\begin{enumerate}
+%\item Search for a string $w \in L_1$ or a string $w \in L_2$ of size $n/2$. This can be done in time
+%$O(n \cdot \text{size of automaton}) = O(n)$ time by constructing the product automaton for $L_i \cap \{0, 1\}^{n/2}$. 
+%    \begin{enumerate}
+%        \item If a valid $w \in L_1$ is found, output $ww^R$. 
+%        \item If a valid $w \in L_2$ is found, find the corresponding extension $w\tilde{w}^R$ and output it. 
+%        In order to find the extension, find an accepting word with prefix $w$ in the product automaton for $L \cap \{0, 1\}^n$. 
+%        Note that it is possible to find $ww^R$ as the accepting word, and then it would not be a valid counterexample.
+%        In this case, we search for a second accepting word with prefix $w$ different from $ww^R$. This be done in $O(n)$ time
+%        in total.   
+%        \item Otherwise, halt without outputting anything.
+%    \end{enumerate}
+%\end{enumerate}
+
+Our refuter is described in \cref{alg:regularrefuter}.
+
+\begin{algorithm}
+\caption{Refuter of \cref{thm:regularrefuter}}\label{alg:regularrefuter}
+\begin{algorithmic}
+\input{algorithms/regularrefuter.tex}
+\end{algorithmic}
+\end{algorithm}
+
+\textsc{FindWord} can be implemented in time $O(n)$ by constructing the product automaton for the language $L(A) \cap \{0, 1\}^\ell$. 
+Similarly, \textsc{ExtendWord} can be implemented in time $O(n)$ by constructing the corresponding product automaton and finding a 
+second accepting path if the first found one results in the undesired word (the graph of the product automaton is acyclic, so finding
+a second path can be done simply by e.g. a DFS traversal). 
+
+Thus, the refuter runs in polynomial (in fact, linear) time and that it outputs counterexamples for infinitely many values of $n$
+(for any even value of $n$ for which there is a counterexample, it finds one, and for big enough $n$ there are always counterexamples by \todonit{Reference to lower bound}).
+\end{proof}
+
+Note that the refuter can be made black-box by learning the regular language recognized by the TM using black-box queries. 
+In fact, if we iterate over all automata of size (say) $\log \log n$ and output the counterexample found for each of the
+automata, our algorithm still runs in polynomial time, so we have an explicit obstruction against all $o(n \log n)$ 1-TMs. 
+
+\todoidea{can it be done in logspace??}
+
+\subsection{Refuters Against $O(n \log n)$-time 1-TMs}
+
+One-tape Turing machines running in $n \log n$ time have much more power than finite automata. And non-deterministic machines running in $n \log n$ time
+are strictly more powerful than deterministic machines: for example, the language of non-palindromes can be recognized in $O(n \log n)$
+non-deterministic time by guessing the index of the differing character and moving the $O(\log n)$ bits of the index around the tape,
+while $\Omega(n^2)$ is required for deterministic machines to recognize this language as it is the complement of a language requiring $\Omega(n^2)$
+time. 
+
+Still, surprisingly, we can find a refuter against palindromes for these machines:
+
+\begin{theorem}
+    \label{thm:refuternlogn}
+
+    \begin{itemize}
+        \item There exists a $\PTIME^\NP$-constructive separation of $\PAL$ against one-tape nondeterministic Turing machines running in time $O(n \log n)$.
+        \item There exists a $\PTIME$-constructive separation of $\PAL$ against one-tape deterministic Turing machines running in time $O(n \log n)$.
+    \end{itemize}
+\end{theorem}
+
+
+We say that a crossing sequence is \emph{short} if it has length at most $4K \log n$. Our refuter works by repeatedly generating palindromes
+and running the machine on them until either a non-accepting palindrome or a collision among short crossing sequences is found. The algorithmic
+procedure is described in detail in \cref{alg:refuternlogn}; we proceed to explain how it works. 
+
+\begin{algorithm}
+    \caption{Refuter of \cref{thm:refuternlogn}}\label{alg:refuternlogn}
+    \begin{algorithmic}
+    \input{algorithms/refuternlogn.tex}
+    \end{algorithmic}
+\end{algorithm}
+\begin{algorithm}
+    \caption{Procedure $\textsc{ChoosePalindrome}$ for \cref{alg:refuternlogn}}\label{alg:choosepalindrome}
+    \begin{algorithmic}
+    \input{algorithms/choosepalindrome.tex}
+    \end{algorithmic}
+\end{algorithm}
+
+\todowrite{Explain empty word notation in introduction}
+
+The program starts by initializing $L$ to the maximum length of short sequences (this will simply act as a shorthand
+for the expression $4K \log n$ later, it is not a variable), and by creating two empty containers, 
+$\texttt{MarkedPrefixes}$ and $\texttt{SequenceByPrefix}$. $\texttt{MarkedPrefixes}$ will be a set
+containing prefixes of palindromes accepted by $M$ for which the $M$ generated a short crossing
+sequence at the right end of the prefix in an accepting execution. $\texttt{SequenceByPrefix}$ will be
+an associative array mapping each prefix in $\texttt{MarkedPrefixes}$ to the corresponding 
+short crossing sequence.
+
+Next, we have the main loop, in which in each iteration we choose a palindrome $ww^R$ and run $M$ on it.  
+We choose the palindrome using the procedure \textsc{ChoosePalindrome}, described in \cref{alg:choosepalindrome}. 
+This procedure returns a word $w$ of length $n/2$, and the corresponding palindrome will be $ww^R$. 
+What this procedure does is to choose a $w$ minimizing the number of prefixes of $w$ which are
+in \texttt{MarkedPrefixes}. It is easier to visualize it by thinking of a binary tree of height $n/2$ whose
+vertices correspond to all binary words of length up to $n/2$, the root being the empty word and the two children
+of each vertex corresponding to the word of the parent concatenated with each of the two characters in the alphabet.
+
+\begin{figure}
+    \missingfigure{Tree of words}
+\end{figure}
+
+In this setting, \texttt{MarkedPrefixes} would correspond to marked vertices in the tree, and we want to find a path
+from the root to a leaf visiting the minimum number of marked vertices. We can compute the minimum number of marked
+vertices in such a path by an easy recursive formula: 
+$$\texttt{Weight}[v] = \texttt{Weight}[\text{child}_1(v)] + \texttt{Weight}[\text{child}_2(v)] + [1 \text{if } v \text{ is marked}],$$
+and once we have computed it for all vertices, find a path with minimum weight by repeatedly descending
+to the child with smaller weight. However, we can not explore the whole tree since it is of exponential size.
+\textsc{ChoosePalindrome} does this in a ``bottom-up'' way so that only vertices with weight greater than $0$ are
+explored. See the pseudocode description at \cref{alg:choosepalindrome} for details.
+
+After choosing the palindrome and running it, if $M$ does not accept we can output it as a counterexample.
+If $M$ does accept it, we analyze the crossing sequences at the first half of the input. If there is a prefix
+with a short crossing sequence that we have not marked yet, we iterate over all other marked prefixes of the same
+size. If we had marked a different prefix with the same short crossing sequence, we can replace the current prefix
+by that one and we obtain a non-palindrome that is accepted, which we can output as a counterexample. If not, we
+add it to the \texttt{MarkedPrefixes} and \texttt{SequenceByPrefix} containers.
+
+We claim that, for all big enough $n$, we will always find a counterexample repeating this $4 \cdot s^{L+1}$ times,
+and that the whole algorithm always runs in polynomial time. Let us prove some simple observations first:
+
+
+
+\begin{lemma}
+\label{lem:averageseqlength}
+    Let $M$ be a 1-TM running in time $K n \log n$, and let $w$ be an accepted word of even length $n$. Then, for at least 
+    $n/4$ of the indices $1 \leq i \leq n/2$, $|\CS_i(x)| \leq 4K \log n$. 
+\end{lemma}
+\begin{proof}
+\begin{multline*}
+K n \log n \geq \sum_{i=1}^{n/2} |\CS_i(x)| \geq 4K \log n \cdot \left(n/2 - |\{i : |\CS_i(x)| \leq 4K \log n\}|\right) \\ \implies  |\{i : |\CS_i(x)| \leq 4K \log n\}| \geq n/4.
+\end{multline*}
+\end{proof}
+
+\begin{lemma}
+\label{lem:choosepalindromeshortseq}
+Let $M$ be a 1-TM. For $n$ large enough (depending on $M$), for every call to \textsc{ChoosePalindrome}
+during the execution of the refuter
+of \cref{alg:refuternlogn} against $M$, the word $w$ returned by \textsc{ChoosePalindrome} satisfies the following:
+there exist at least $n/8$
+indices $1 \leq i \leq n/2$ so that $|\CS_i(ww^R)| \leq 4K log n$ and the prefix $w[1 \ldots i]$ does not
+already belong to \texttt{MarkedPrefixes}. (In other words, at least $n/8$ prefixes are added to \texttt{MarkedPrefixes}
+in each iteration, if no counterexample is found).
+\end{lemma}
+\begin{proof}
+There are $4 \cdot s^{L+1}$ iterations and in each iteration at most $n/2$ prefixes are added to \texttt{MarkedPrefixes}.
+Therefore, at any time, there are at most $2n \cdot s^{L+1}$ prefixes in \texttt{MarkedPrefixes}. We claim that the 
+word returned by $\textsc{ChoosePalindrome}(n, S)$ has at most $1+ \log |S|$  
+prefixes in $S$, which for our calls with $S = \texttt{MarkedPrefixes}$ is at most 
+$1 + \log(2n \cdot s^{L+1}) = O(\log n)$.
+
+To prove so, consider the following greedy algorithm to find a path from the root of the tree to a leaf
+passing through not too many marked vertices 
+which could have been an alternative implementation for 
+\textsc{ChoosePalindrome}: at each vertex, descend to the child with the least amount of marked vertices 
+in its subtree. It is clear that after each step the number of marked vertices in the current subtree is halved,
+so after $1 + \log |S|$ steps there are no marked vertices in the subtree. Therefore, there exists a path with
+at most $1 + \log |S|$ marked vertices, and since \textsc{ChoosePalindrome} chooses the path with the minimum number of
+marked vertices, its result must have at most that many marked vertices.
+
+To finish, by \cref{lem:averageseqlength} the result $w$ has at least $n/4$ indices $0 \leq i \leq n/2$ with 
+$|\CS_i(ww^R)| \leq 4K \log n$, so at least $n/4 - O(\log n) > n/8$ (for big enough $n$) of them are not in 
+\texttt{MarkedPrefixes}. 
+\end{proof}
+
+\begin{lemma}
+\label{lem:numiterations}
+Let $M$ be a 1-TM. For $n$ large enough (depending on $M$), the execution of the refuter
+of \cref{alg:refuternlogn} against $M$ outputs a word $x$ such that $M(x) \neq \PAL(x)$.
+\end{lemma}
+\begin{proof}
+It is clear that whenever the refuter outputs a word, it is a correct counterexample. Therefore,
+we have to prove that for $n$ large enough the refuter always outputs a counterexample. 
+Suppose not, that for some $n$ large enough to apply \cref{lem:choosepalindromeshortseq}
+the refuter does not output anything after the $4 \cdot s^{L+1}$ iterations.
+Then, by \cref{lem:choosepalindromeshortseq}, \texttt{MarkedPrefixes} has at least $n/8 \cdot 4 \cdot s^{L+1}$
+elements at the end of the execution. 
+That means that for some $1 \leq i \leq n/2$, there must be at least $s^{L+1}$ of length $i$. 
+There are $1 + s + \ldots + s^L < s^{L+1}$ crossing sequences of length at most $L$, so there are two 
+prefixes of length $i$ with the same short crossing sequence. But that would have been detected 
+during the execution of the program and a counterexample would have been printed, contradiction. 
+\end{proof}
+
+\begin{proof}[Proof of \cref{thm:refuternlogn}]
+The correctness of the refuter is established by \cref{lem:numiterations}. We now need to prove that it runs in time 
+polynomial in $n$.  The number of iterations is $4 \cdot s^{L+1} = 4 \cdot n^{4K \log s}$, polynomial in $n$.
+Inside each iteration, $\textsc{ChoosePalindrome}(n, S)$ runs in $O(n \cdot |S|)$, which is polynomial (by the previous
+argument that \texttt{MarkedPrefixes} always has an at most polynomial number of elements), 
+running $M$ is $O(n \log n)$ (with possibly a call to an $\NP$ oracle),
+and the subsequent iteration
+over $i \gets 1 \ldots n/2$ and all elements of \texttt{MarkedPrefixes} is also polynomial.
+
+Therefore, the refuter runs in polynomial time and we have a $\PTIME$-constructive (or $\PTIME^\NP$-constructive) 
+separation. 
+\end{proof}
+
+\subsection{Additional Aspects and Consequences of the Refuters}
+
+We can modify our refuter to work against machines that run in more than $n \log n$ time; we just have to modify the
+definition of ``short sequence'' to ones that are shorter than $4T(n)/n$, where $T(n)$ is the runtime of the machine.
+Our refuter then no longer runs in polynomial time in that case, though: 
+
+\begin{theorem}
+    For each 1-NTM $M$ running in time $O(n \cdot f(n))$ with $f(n) = o(n)$, there is a refuter of $\PAL$ against $M$ running in time 
+    $n \cdot 2^{O(f(n))}$ with a $\NP$ oracle.
+\end{theorem}
+
+\begin{corollary}
+    $\DTIME[2^{n+O(f(2^n))}] \not\subset \SIZE[f(2^{n/2})^\delta]$.
+\end{corollary}
+
+Note that by taking $f(n) = (\log n)^k$, the $\DTIME$-class bound we get is similar to the bound implicitly obtained
+by the classic diagonalization used to show $\Sigma^{\PTIME}_4 \not\subset \SIZE(n^k)$ \cite{Kannan82}. This refuter
+is too weak to give new circuit lower bounds, but on in some sense it seems to be ``close''. For example, if we could 
+refute $O(n \polylog(n))$ 1-NTMs still using polynomial time, then we would prove $\E^\NP \not\subset \SIZE(n^k)$, 
+which is not known. We now have a refuter against all $O(n^{1+o(1)})$ 1-TMs using subexponential ($2^{n^o(1)}$) time;
+if we could refute $O(n^{1+\eps})$ in that time, we would get $\DTIME[2^{2^{o(n)}}] \not\subset \SIZE[2^{\delta n}]$.   
+
+Therefore, it seems difficult to improve this refuter. However, there is some evidence that it does admit improvements.
+First, for the ease of exposition here we have explained a version of the refuter which is white-box on the machine 
+being refuted (indeed, it is a constructive separation in the sense of \cite{ConstructiveSeparations} which has access
+to uncomputable information about the machine $M$, such as the constant $K$ in its runtime), but it can be improved 
+to be black-box (with oracle access to $M$). Here we briefly explain which aspects need to be modified:
+
+\begin{itemize}
+    \item The refuter depends on the values of $s$ and $K$, which can not be obtained by black-box access. However,
+    since we can verify whether the output is a valid counterexample, we can just iterate through
+    $(s, K) = (1, 1), (2, 2), \ldots, (n, n)$, stopping as soon as we obtain a valid counterexample. 
+    This makes the refuter no longer be a polynomial-time algorithm as a general oracle-algorithm, but for
+    any fixed 1-TM $M$ given as an oracle, it will be a polynomial-time algorithm, since for $n$ big enough
+    the refuter will always stop at a fixed, constant value of $s$ and $K$. 
+    \item The refuter depends on knowing the crossing sequences of the execution in order to choose a new palindrome
+    which ``minimizes the overlap'' with the short crossing sequences obtained by previous palindromes. 
+    However, as we hinted at before, this is not really necessary: indeed, if we just generate a fixed set 
+    of palindromes in which the $O(\log n)$ first bits are all different, we still get that any two palindromes
+    overlap in at most $O(\log n)$ prefixes, which is enough for our purposes. 
+    \item The refuter also depends on knowing the crossing sequences in order to find a collision and to construct
+    the counterexample. However, we do know that a collision among the polynomially-many generated palindromes will exist
+    after all the iterations, so we can just check all pairs of palindromes and all indices $i = 1, \ldots, n/2$, in 
+    polynomial time in total. 
+\end{itemize}
+
+Therefore, we have a polynomial-time refuter against $O(n \log n)$-time 1-TMs that only needs oracle access to $M$
+(and in particular it does not need an $\NP$ oracle for 1-NTMs). And we do not even take advantage of much information about
+the oracle calls to $M$: we simply use them to ``test candidates'' for counterexamples, stopping when we find a correct
+counterexample but otherwise not being adaptive at all in the queries!
+
+However, do note that, since we need to stop at constant $(s, K)$ in order to run in polynomial time, we do not have 
+a polynomial-time explicit-obstructions refuter, like we did in the $o(n \log n)$ setting. So we do lose something
+when going from $o(n \log n)$ to $\Theta(n \log n)$. Still, given the austerity of our refuter when it comes to using
+information about the specific machine we are refuting, it is difficult to believe we can not do better. 
+
+\begin{question}
+Is it possible to obtain a better $\PTIME^\NP$-constructive separation, even if not good enough to obtain new circuit lower
+bounds, by taking advantage of white-box access and the $\NP$ oracle?
+\end{question}
+
+It is of note that our refuters work for non-deterministic 1-TMs in exactly the same way as they do for deterministic ones,
+and they work for all $O(n \log n)$ 1-TMs, not just those that accept only palindromes. 
+\cref{thm:refutertm} might reduce our hopes of obtaining great progress against non-deterministic machines, 
+since that would imply breakthrough circuit lower bounds, but progress in refuters against deterministic 1-TMs doesn't seem
+easy either, and yet we do not have any explicit reason why. \cref{thm:nobppseparation} explains why it shouldn't be possible
+to have a refuter for all $O(n^{1+\eps})$ deterministic 1-TMs, but in the setting of 1-TMs which only accept palindromes,
+which is linked to ``plausible'' derandomization, we do not have any obstruction. 
+
+\begin{question}
+Can we get a better $\PTIME$-constructive separation against deterministic 1-TMs promised to accept only 
+palindromes? If not, can we get any result saying that it should be as difficult as obtaining certain non-trivial derandomization,
+like we have for non-deterministic machines?
+\end{question}
+
+
+

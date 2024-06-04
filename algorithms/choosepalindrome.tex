@@ -1,0 +1,30 @@
+\Function{ChoosePalindrome}{n, $S$}
+    \State $\texttt{Weight} \gets []$ \Comment{Associative array of integers. If $\texttt{Weight}$ is accessed for a key that has not been defined yet, it is initialized with default value $0$.}
+    \State $\texttt{VerticesByLength} \gets \Call{Array}{n/2}$ \Comment{Array of sets.}
+    \For{$v \in S$}
+        \State $\texttt{VerticesByLength}[|v|] \gets \texttt{VerticesByLength}[|v|] \cup \{v\}$
+    \EndFor
+    \For{$\ell \gets n/2 \ldots 1$}
+        \For {$v \in \texttt{VerticesByLength}[\ell]$}
+            \If{$v \in S$}
+                \State $\texttt{Weight}[v] \gets \texttt{Weight}[v]+1$
+            \EndIf
+            \State $p \gets \Call{Pop}{v}$
+            \If{$\texttt{Weight}[p] = 0$}
+                \State $\texttt{Weight}[p] \gets \texttt{Weight}[v]$
+                \State $\texttt{VerticesByLength}[\ell-1] \gets \texttt{VerticesByLength}[\ell-1] \cup \{p\}$
+            \Else
+                \State $\texttt{Weight}[p] \gets \min\{\texttt{Weight}[p], \texttt{Weight}[v]\}$
+            \EndIf
+        \EndFor
+    \EndFor
+    \State $w \gets \emptyword$
+    \RepeatTimes{$n/2$}
+        \If{$\texttt{Weight}[w \concat 0] \leq \texttt{Weight}[w \concat 1]$}
+            \State $w \gets w \concat 0$
+        \Else
+            \State $w \gets w \concat 1$
+        \EndIf
+    \EndRepeatTimes
+    \State \Return $w$
+\EndFunction

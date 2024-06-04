@@ -1,0 +1,17 @@
+\Input $1^n$
+\Require $n$ even.
+\Hardcode $A_{L_1} \gets$ DFA corresponding to $L_1$.
+\Hardcode $A_{L_2} \gets$ DFA corresponding to $L_2$.
+\Program
+\State $w \gets \Call{FindWord}{A_{L_1}, n/2}$ \Comment{$\Call{FindWord}{A, \ell}$ finds a word of length $\ell$ accepted by automaton $A$.}
+\If{Found $w$}
+    \Output $ww^R$
+    \Halt
+\EndIf
+\State $w \gets \Call{FindWord}{A_{L_2}, n/2}$
+\If{Found $w$}
+    \State $u \gets \Call{ExtendWord}{A_{L_2}, w, ww^R, n}$ \Comment{$\Call{ExtendWord}{A, p, v, \ell}$ finds a word of length $\ell$, with prefix $p$ and different from word $v$, accepted by automaton $A$.}
+    \Output $u$
+    \Halt
+\EndIf
+\Halt

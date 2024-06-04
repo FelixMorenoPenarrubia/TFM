@@ -1,0 +1,101 @@
+\todowrite{Write Chapter 2}
+
+\section{Basic Definitions}
+
+Basic definition of constructive separation as in \cite{ConstructiveSeparations}.
+
+\begin{definition}
+	\label{def:refuter}
+	For a function $f \colon {0, 1}^* \to {0, 1}$ and an algorithm $\A$, 
+	a $\PTIME$-refuter for $f$ against $\A$ is a deterministic polynomial time
+	algorithm $R$ that, given input $1^n$, prints a string $x \in \{0, 1\}^n$,
+	such that for infinitely many $n$, $A(x) \neq f(x)$.
+	
+	A $\BPP$-refuter for $f$ against $\A$ is a randomized polynomial time algorithm
+	$R$ that, given input $1^n$, prints a string $x \in \{0, 1\}^n$, such that 
+	for infinitely many $n$, $A(x) \neq f(x)$ with probability at least $2/3$.
+
+	A $\ZPP$-refuter for $f$ against $\A$ is a randomized polynomial time algorithm $R$
+	that, given input $1^n$, prints $x \in \{0, 1\}^n \cup \{\blank\}$, such that for 
+	infinitely many $n$, either $x = \blank$ or $A(x) \neq f(x)$, and $x \neq \blank$ with
+	probability at least $2/3$. 
+\end{definition}
+
+\begin{definition}
+	\label{def:constructiveseparation}
+	For $\calD \in \{\PTIME, \BPP, \ZPP\}$ and a class of algorithms $\mathcal{C}$, we say there is a 
+	$\calD$-constructive separation of $f \not\in \mathcal{C}$, if for every algorithm $\A$ computable
+	in $\mathcal{C}$, there is a refuter for $f$ against $A$ that is computable in $\mathcal{D}$. 
+\end{definition}
+
+\section{Main Results of \cite{ConstructiveSeparations}}
+
+Briefly state the results of \cite{ConstructiveSeparations}, pointing to further discussion in the next chapters. 
+
+\subsection{Conjectured Separations Can Be Made Constructive}
+
+Results about constructive separations for conjectured uniform separations.
+
+\subsection{Constructive Separations for Known Results Imply Breakthroughs}
+
+\subsubsection{Results}
+
+State the results we will discuss in this thesis.
+
+\begin{restatable}[Theorem 1.6 from \cite{ConstructiveSeparations}]{theorem}{thmcsrefuterqa}\label{thm:csrefuterqa} 
+	Let $\eps$ be a function of $n$ satisfying $\eps \leq 1/(\log n)^{\omega(1)}$, and $1/\eps$ is a positive integer
+     computable in $\poly(1/\eps)$ time given $n$ in binary.
+	\begin{itemize}
+		\item If there is a polylogtime-uniform-$\AC^0$-constructive separation of $\MAJ_{n,\eps}$ from randomized
+         query algorithms $A$ using $o(1/\eps^2)$ queries and $\poly(1/\eps)$ time, then $\NP \ne \PTIME$.
+		\item If there is a polylogtime-uniform-$\NC^1$-constructive separation of $\MAJ_{n,\eps}$ from randomized
+         query algorithms $A$ using $o(1/\eps^2)$ queries and $\poly(1/\eps)$ time, then $\PSPACE \ne \PTIME$.
+	\end{itemize}
+\end{restatable}
+
+\begin{restatable}[Theorem 3.4 from \cite{ConstructiveSeparations}]{theorem}{thmcsrefutertm}\label{thm:csrefutertm} 
+The following hold:
+	\begin{itemize}
+	    \item If there is a $\PTIME^{\NP}$-constructive separation of $\PAL$
+		from nondeterministic $O(n^{1.1})$ time one-tape Turing machines, then
+		$\E^{\NP} \not \subset \SIZE[2^{\delta n}]$ for some constant $\delta >0$.
+	    
+        \item If there is a $\PTIME$-constructive separation of $\PAL$ 
+		from nondeterministic $O(n^{1.1})$ time one-tape Turing machines, then
+		 $\E \not \subset \SIZE[2^{\delta n}]$ for some constant $\delta >0$.
+        
+        \item If there is a $\LOGSPACE$-constructive separation of $\PAL$ 
+		from nondeterministic $O(n^{1.1})$ time one-tape Turing machines, then
+		 $\PSPACE \not \subset \SIZE[2^{\delta n}]$ for some constant $\delta >0$.
+	\end{itemize}
+\end{restatable}
+
+
+\subsubsection{Lemmas About Circuit Complexity of Refuters}
+
+%Explain and prove ``binary-to-unary'' lemmas, which are used in many of the proofs 
+%and will be useful for next chapters. 
+
+\todo{REVIEW THIS - ATSERIAS}
+
+\begin{lemma}
+	\label{lem:circuitbinarytounary}
+	Let $T(n), s(n) \geq n$ be functions and assume $\DTIME(T(2^n)) \subseteq \SIZE(s(n))$. 
+	Then, for every algorithm $R$ running in time $T(n)$ and outputting $n$ bits,
+	the output of $R(1^n)$ can be computed by a circuit of size $s(2 \lceil \log n \rceil)$ 
+	(which takes as input an index $0 \leq i < n$ and outputs the $i$-th bit of $R(1^n)$).
+\end{lemma}
+\begin{proof}
+Consider the function $f_R(m, i)$ which, given $m$ and $i$ in binary, outputs the $i$-th bit of $R(1^m)$. The inputs to $f_R$ can 
+be encoded in $2 \lceil \log m \rceil$ bits so that the input size is the same for each input $(m, i)$ with the same $m$.
+$f_R \in \DTIME(T(2^N))$, so $f_R$ has circuits of size $s(N)$, where $N = 2 \lceil \log m \rceil$ is the input size. 
+We get the desired result by considering, for each $n$, the circuit for $f_R$ with input size $2 \lceil \log n \rceil$
+which we modify by fixing the first $\lceil \log n \rceil$ input 
+bits to the value of $n$. 
+\end{proof}
+
+\section{Additional Aspects of Refuters}
+
+Explain additional aspects such as list refuters, black-boxness/gray-boxness/explicit constructions, certifiability, ``minimum refuting size vs. minimum counterexample size'', etc.
+Mention results of \cite{Atserias06} and \cite{Bogdanov10}. 
+

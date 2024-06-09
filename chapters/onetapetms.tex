@@ -361,18 +361,19 @@ that the requierements to derandomize our constructive separation are much stron
 \section{Strongly Constructive Separations Do Not Exist Under Cryptographic Assumptions}
 \label{sec:cryptotm}
 
-In this section, we will see that $\BPP$-constructive separations of $\PAL$ against $O(n^{1+\eps})$ 1-TMs do not exist if we assume
+In this section, we will see that $\BPP$-constructive separations of $\PAL$ against $O(n^{1+\eps})$ time 1-TMs do not exist if we assume
 the existence of a certain cryptographic primitive. To show this, we will use an idea from \cite{Oliveira24}, where it is used 
-to show that lower bounds for 1-TMs against palindromes can not be proved in certain theories of weak arithmetic. Here we 
+to show that lower bounds for 1-TMs recognizing palindromes can not be proved in certain weak theories of arithmetic. Here we 
 will reproduce their argument, adapting it to our setting.
 
 The cryptographic primitives we will be using are \emph{keyless collision-resistant hash functions}.
 
 \begin{definition}[Keyless Collision-Resistant Hash Function] A keyless collision-resistant hash
-function with hash value length $m = m(n) < n$ is a deterministic polynomial-time
-function $h \colon \{0, 1\}^n \to \{0, 1\}^m$ such that for every uniform probabilistic polynomial-time adversary
+function with hash value length $m = m(n) < n$ is a polynomial-time computable
+function $h \colon \{0, 1\}^* \to \{0, 1\}^*$ such that for every $x$ with $|x| = n$ we have $|h(x)| = m(n)$
+and for every uniform probabilistic polynomial-time adversary
 $\A$ and every $n$, we have
-$$\Prob{\A(1^n)  \text{ outputs } \langle x_1, x_2 \rangle \text{ such that } x_1 \neq x_2 \text{ and } h(x_1) = h(x_2)} \leq \eps(n)$$ 
+$$\Prob{\A(1^n)  \text{ outputs } \langle x_1, x_2 \rangle \text{ such that } x_1 \neq x_2, |x_1| = |x_2| = n \text{ and } h(x_1) = h(x_2)} \leq \eps(n)$$ 
 where $\eps(n)$ is a \emph{negligible} function (that is, $\eps(n) = 1/n^{\omega(1)}$).
 \end{definition}
 
@@ -385,7 +386,7 @@ The answer is yes: we can do it using a technique from cryptography known as the
 \begin{theorem}
 \label{thm:hashonetape}
 Suppose there exist keyless collision-resistant hash functions. Then, for all $0 < \delta, \eps < 1$, there exists a keyless collision resistant hash
-function $H = H_{\delta, \epsilon}$ with hash value length $m < n^\delta$ which can be computed in time $O(n^{1+\eps})$ in a one-tape
+function $H = H_{\delta, \epsilon}$ with hash value length $m(n) < n^\delta$ which can be computed in time $O(n^{1+\eps})$ in a one-tape
 TM.
 \end{theorem}
 
@@ -393,17 +394,18 @@ TM.
 Let $h$ be a keyless collision-resistant hash function, computable in time $O(n^k)$ in a 1-TM for some $k$.
 Without loss of generality, we can assume that $h$ has hash value length $n-1$ (we can always arbitrarily
 pad the output values mantaining collision resistance). Given an input size $n$, 
-let $m = m(n) = \min\{\lfloor n^\delta \rfloor,  \lfloor n^{\eps/k} \rfloor \}$ and define the following sequence of hash functions:
+let $m = m(n) = \min\{\lfloor n^\delta \rfloor,  \lfloor n^{\eps/k} \rfloor \}$ and define the following sequence of functions:
 
 \todowrite{consistent notation for concatenation, also explain in introduction}
 
 \begin{itemize}
-    \item $H_0 \colon \{0, 1\}^m \to \{0, 1\}^{m-1}$: $H_0(x) = h(x)$.
-    \item $H_1 \colon \{0, 1\}^{m+1} \to \{0, 1\}^{m-1}$: $H_1(x \concat b) = h(H_0(x) \concat b)$.
-    \item $\dots$
-    \item $H_i \colon \{0, 1\}^{m+i} \to \{0, 1\}^{m-1}$: $H_i(x \concat b) = h(H_{i-1}(x) \concat b)$.
-    \item $\dots$
-    \item $H_{n-m} \colon \{0, 1\}^{n} \to \{0, 1\}^{m-1}$: $H_{n-m}(x \concat b) = h(H_{n-m-1}(x) \concat b)$.
+    \item[] $H_{-1} \colon \{0, 1\}^{m-1} \to \{0, 1\}^{m-1}$: $H_{-1}(x) = x$
+    \item[] $H_0 \colon \{0, 1\}^m \to \{0, 1\}^{m-1}$: $H_0(x) = h(x)$.
+    \item[] $H_1 \colon \{0, 1\}^{m+1} \to \{0, 1\}^{m-1}$: $H_1(x \concat b) = h(H_0(x) \concat b)$.
+    \item[] $\dots$
+    \item[] $H_i \colon \{0, 1\}^{m+i} \to \{0, 1\}^{m-1}$: $H_i(x \concat b) = h(H_{i-1}(x) \concat b)$.
+    \item[] $\dots$
+    \item[] $H_{n-m} \colon \{0, 1\}^{n} \to \{0, 1\}^{m-1}$: $H_{n-m}(x \concat b) = h(H_{n-m-1}(x) \concat b)$.
 \end{itemize}
 
 %See \cref{fig:merkledamgard} for a pictorial depiction. 
@@ -413,29 +415,26 @@ let $m = m(n) = \min\{\lfloor n^\delta \rfloor,  \lfloor n^{\eps/k} \rfloor \}$ 
 Take $H = H_{n-m}$. We have to prove that $H$ is a collision-resistant hash function, and that it can be
 computed in time $O(n^{1+\eps})$ in a 1-TM. 
 
-We prove by induction on $i$ that all the functions $H_i$ are collision-resistant. For the base case $i = 0$, 
-$H_0 = h$ and it is collision-resistant by assumption. For the induction step, assuming $H_{i-1}$ is
-collision-resistant we will prove $H_i$ is collision-resistant too. 
-Note that a pair $\langle x_1 \concat b_1 , x_2 \concat b_2 \rangle$ is a collision for $H_i$ if and only if either:
+We first prove that $H$ is a collision-resistant hash function.
+Let $\A_H$ be a polynomial-time adversary outputting collisions for $H$. Consider the following algorithm
+$\A_h$: on input $1^m$, run $\A(1^n)$ for all $n$ so that $m(n) = m$
+(there are polynomially many such values of $n$). 
+If $\A_H$ outputs a valid collision $\langle x_1, x_2 \rangle$ for $H$ for some such value of $n$,
+do the following: compute the smallest value $i \in [0, n-m]$ such that $x_1[1 \ldots m+i] \neq x_2[1 \ldots m+i]$
+but $H_i(x_1[1 \ldots m+i]) = H_i(x_2[1 \ldots m+i])$ and output
+$\langle H_{i-1}(x_1[1 \ldots m+i-1]) || x_1[m+i], H_{i-1}(x_2[1 \ldots m+i-1]) || x_2[m+i] \rangle$.
+We have that $h(H_{i-1}(x_1[1 \ldots m+i-1]) || x_1[m+i]) = h(H_{i-1}(x_2[1 \ldots m+i-1]) || x_2[m+i])$,
+and by the assumption that $i$ was the smallest value with the specified property, at least one of
+$H_{i-1}(x_1[1 \ldots m+i-1]) \neq H_{i-1}(x_2[1 \ldots m+i-1])$ or $x_1[m+i] \neq x_2[m+i]$
+hold. In any case, $\A_h(1^m)$ outputs a valid collision of length $m$ for $h$. Hence:
 
-\begin{itemize}
-    \item $\langle x_1, x_2 \rangle$ is a collision for $H_{i-1}$.
-    \item $\langle H_{i-1}(x_1) \concat b_1, H_{i-1}(x_2) \concat b_2 \rangle$ is a collision for $h$.
-\end{itemize}
+$$
+\Prob{\A_H(1^n)  \text{ outputs a collision for } H } \leq \Prob{\A_h(1^{m(n)}) \text{ outputs a collision for } h} \leq \eps_{\A_h}(m(n)),
+$$
 
-Let $\A$ be any probabilistic polynomial-time algorithm, and let $\A_1$ and $\A_2$ be the corresponging probabilistic
-polynomial-time algorithms that run $\A$ and transform an output of the form $\langle x_1 \concat b_1 , x_2 \concat b_2 \rangle$ 
-to $\langle x_1, x_2 \rangle$ and $\langle H_{i-1}(x_1) \concat b_1, H_{i-1}(x_2) \concat b_2 \rangle$, respectively 
-(note that $H_{i-1}$ can be computed in polynomial time). Then:
-\begin{multline*}
-\Prob{\A(1^n)  \text{ outputs } \langle x_1 \concat b_1, x_2 \concat b_2 \rangle \text{ collision for } H_i}
-\leq \Prob{\A_1(1^n) \text{ outputs } \langle x_1, x_2 \rangle \text{ collision for } H_{i-1}} \\
-+ \Prob{\A_2(1^n)  \text{ outputs }  \langle H_{i-1}(x_1) \concat b_1, H_{i-1}(x_2) \concat b_2 \rangle \text{ collision for } h} 
-\leq \eps_1(n) + \eps_2(n) 
-\end{multline*} 
-
-Where $\eps_1(n)$ and $\eps_2(n)$ are negligible functions, by the hypothesis. Therefore, the probability that $\A$ outputs a 
-collision for $H_i$ is also negligible, as desired. 
+where $\eps_{\A_h}(n)$ is a negligible function since $h$ is collision-resistant, 
+and therefore $\eps_{\A_h}(m(n))$ is also negligible and we get that the probability of success
+of any adversary is bounded by a negligible function, as desired. 
 
 Now we describe how to compute the function in a one-tape TM in time $O(n^{1+\eps})$:
 
@@ -445,28 +444,29 @@ keeping a counter near the head in a ``separate track'' from the input
 The counter has at most $\log n$ bits and so updating it and moving it to the right takes
 $O(\log n)$ time, for a total complexity of $O(n \log n)$. 
 
-Second, we compute $m$ and we put a mark on the $m$-th character.
+Second, we compute $m$ and we put a mark on the $m$-th character of $x$ on the tape.
 Computing $m$ given $n$ in binary can be done in $\polylog(n)$ time, since
 $\eps$ and $\delta$ are fixed rational numbers, and mantaining a counter until the $m$-th character can
-be done in $O(m \log m) = O(n)$, for a total complexity of $O(n)$ for this step. 
+be done in $O(m \log m) = O(n)$, for a total complexity of $O(n)$ for this part. 
 
-Third, we compute the hash value in a process with $n-m+1$ steps. The $i$-th step ($0 \leq i \leq n-m$) is 
+Third, we compute the hash value in a process with $n-m+1$ iterations. The $i$-th iteration ($0 \leq i \leq n-m$) is 
 as follows:
 
 \begin{enumerate}
     \item At the beginning, the tape contains $H_{i-1}(x[1 \ldots m-1+i])$, followed by the $m+i$-th 
-    charcater of $x$ with a mark on it, followed by the remaining characters of $x$. (For convenience,
-    we let $H_{-1}$ be the identity function, so that this is also true for $i = 0$).
-    \item We scan the tape, find the marked character, move the mark to the right and copy the value 
+    charcater of $x$ with a mark on it, followed by the remaining characters of $x$.
+    %(For convenience, we let $H_{-1}$ be the identity function, so that this is also true for $i = 0$).
+    \item We scan the tape, find the marked character, move the mark one cell to the right and copy the value 
     $H_{i-1}(x[1 \ldots m-1+i]) \concat x[m+i]$ into a separate track. 
     \item We compute $h(H_{i-1}(x[1 \ldots m-1+i]) \concat x[m+i]) = H_i(x[1 \ldots m+i])$ in a the separate
     track, cleaning it after the execution.
     \item We copy the value of $H_i(x[1 \ldots m+i])$ back into the main track, so that the tape now contains
-    $H_{i}(x[1 \ldots m+i])$, followed by the $m+i+1$-th character with a mark, followed by the rest of characters.
+    $H_{i}(x[1 \ldots m+i])$, followed by the $m+i+1$-th character with a mark, followed by the rest of characters
+    of $x$.
 \end{enumerate}
 
-After $n-m+1$ steps, we have the value of $H_{n-m}(x)$ in the tape, as desired. Copying the values from one
-track to the other can be done in $O(m)$ time; the most expensive part of one step is computing $h$, which 
+After $n-m+1$ iterations, we have the value of $H_{n-m}(x)$ in the tape, as desired. Copying the values from one
+track to the other can be done in $O(m)$ time; the most expensive part of one iteration is computing $h$, which 
 is done in $O(m^k)$ time. Therefore, the total time complexity is $O(n \cdot m^k) = O(n^{1+\eps})$. 
 
 
@@ -488,7 +488,8 @@ is done in $O(m^k)$ time. Therefore, the total time complexity is $O(n \cdot m^k
 \begin{proof}
 Construct a machine $M$ that computes the hash function $H = H_{\eps, \eps}$ of \cref{thm:hashonetape} on the first
 half on the input and on the reverse of the second half of the input, and accepts if they are equal. Note that dividing the 
-input into two halves can be done in $O(n \log n)$, and that the computation of $H$ can be done on the reverse of
+input into two halves can be done in $O(n \log n)$ time by moving a counter, 
+and that the computation of $H$ can be done on the reverse of
 the second half without needing to explicitly write the reverse of the second half of the tape. Comparing the 
 two hashes can be done in $O(mn) = O(n^{1+\eps})$, so the machine $M$ runs in time $O(n^{1+\eps})$. 
 
@@ -498,8 +499,8 @@ Thus, any polynomial-time refuter $R$ that outputs counterexamples against $M$ c
 efficient adversary that outputs collisions for $H$, contradicting that $H$ is collision-resistant. 
 \end{proof}
 
-Note that the machine $M$ we constructed accepts all palindromes (and therefore fails only on non-palindromes), so
-\cref{thm:nobppseparation} applies to $\BPP$-constructive separations against 1-TMs promised to fail only on non-palindromes.
+Note that the machine $M$ we constructed in \cref{thm:nobppseparation} accepts all palindromes (and therefore fails only on non-palindromes), so
+the result also applies to $\BPP$-constructive separations against 1-TMs promised to fail only on non-palindromes.
 This offers an interesting contrast with \cref{thm:refutertm}: refuting 1-NTMs promised to fail only on palindromes proves
 circuit lower bounds, while refuting 1-TMs promised to fail only on non-palindromes proves non-existence of cryptographic
 primitives, which is an ``upper bound''.
@@ -866,7 +867,7 @@ which is linked to ``plausible'' derandomization, we do not have any obstruction
 
 \begin{question}
 Can we get a better $\PTIME$-constructive separation against deterministic 1-TMs promised to accept only 
-palindromes? If not, can we get any result saying that it should be as difficult as obtaining certain non-trivial derandomization,
+palindromes? If not, can we get any result saying that it should be as difficult as obtaining certain derandomization,
 like we have for non-deterministic machines?
 \end{question}
 

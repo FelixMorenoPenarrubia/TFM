@@ -210,13 +210,13 @@ So that:
 \begin{align*}
 \delta & \geq \sum_{i=0}^{\lceil t/2 \rceil-1} \binom{t}{i} f^+_{U_{S_n}}(i, t-i) \\
        & \geq \sum_{i=0}^{\lceil t/2 \rceil-1} \frac{1}{2} \binom{t}{i} \left(\frac{k}{n}\right)^i \left(\frac{n-k}{n} \right)^{t-i} \\
-       & = \frac{1}{2} \Probsub{X \sim \text{Bin}(n, k/n)}{X < \left\lceil \frac{t}{2} \right\rceil}
+       & = \frac{1}{2} \Probsub{X \sim \text{Bin}(t, k/n)}{X < \left\lceil \frac{t}{2} \right\rceil}
 \end{align*}
 
 By standard bounds on the tail of the binomial distribution,
 (TODO reference and details \todonit{reference for tails of binomial distribution})
 we have that there exists a constant $C$ so that 
-$\Probsub{X \sim \text{Bin}(n, k/n)}{X < \left\lceil \frac{t}{2} \right\rceil} \geq C e^{-4\eps^2t}$.
+$\Probsub{X \sim \text{Bin}(t, k/n)}{X < \left\lceil \frac{t}{2} \right\rceil} \geq C e^{-4\eps^2t}$.
 Rearranging, we get our desired result. 
 
 \end{proof}
@@ -234,6 +234,11 @@ TODO \todowrite{prove corollary, and state it more precisely too}
 
 Explain how to make a randomized constructive separation from above (amplify error probability).
 
+\begin{theorem}
+\label{thm:qarandomizedcs}
+
+\end{theorem}
+
 
 
 \section{Sufficiently Constructive Separations Imply Lower Bounds}
@@ -248,20 +253,152 @@ In \cref{thm:csrefuterqa}, there are two important quantitative assumptions
 that must hold in order to obtain a lower bound:
 
 \begin{enumerate}
-    \item We must have a refuter against all $t$-juntas with $t = O(\log \eps^-1 / \eps^{1+\delta})$ for
+    \item We must have a refuter against all $t$-juntas with $t = O(\log \eps^{-1} / \eps^{1+\delta})$ for
     some $\delta > 0$.
     \item The function $\eps(n)$ must go to zero sufficiently fast: $\eps(n) = 1/(\log n)^{\omega(1)}$.
 \end{enumerate}
 
 We can wonder whether those conditions are \emph{tight}, in the sense that if we relax them slightly 
-then we can have a constructive separation. 
+then we can have a constructive separation. We will show that the answer is positive for both of
+those conditions. 
 
-\subsection{Explicit Obstructions for $t = o(1/\eps)$}
+\subsection{Refuters for $t \leq C/\eps$}
 
 Explain that for query algorithms making $o(1/\eps)$ queries, explicit-obstructions refuters exist.
 
-\todoidea{what happens with O(1/eps)?}
+\subsection{Derandomization of Query Algorithms and Refuters for $\eps = 1/\polylog(n)$}
 
-\subsection{Derandomization of Query Algorithms}
+One possible approach to obtaining deterministic constructive
+separations is to try to derandomize 
+the constructive separation of \cref{thm:qarandomizedcs}.
+Pseudorandom generators fooling query algorithms are well-studied
+\cite{Hatami2023}, and they will allow us to obtain a quasipolynomial
+list-refuter when $\eps = 1/(\log(n))^{O(1)}$.
 
-Explain $t$-wise independent distributions and how they help when $\eps = O(1)$. 
+\begin{definition}
+A set $X_1, \ldots, X_n$ of random variables is $k$-wise independent if for any $I \subseteq [n]$
+with $|I| = k$ and any values $\{x_i\}_{i\in I}$, we have that the events $\{X_i = x_i\}_{i \in I}$ are independent.
+
+We say that a probability distribution $\D$ on $\{0, 1\}^n$ is $k$-wise independent if the $n$ random variables 
+corresponding to each of the bits are $k$-wise independent. 
+
+We say that a probability distribution $\D$ on $\{0, 1\}^n$ is $k$-wise independent probability $p$ Bernoulli
+if it is $k$-wise independent and $\Prob{x_i = 1} = p$ for all $i =1 , \dots, n$. 
+\end{definition}
+
+\todopolish{Think of better/shorter terms to use to refer to k-wise independent prob p Bernoulli.}
+
+It is clear that $k$-juntas can not distinguish between $k$-wise independent Bernoulli distributions 
+and $n$ independent Bernoulli random variables with the same probability. Interestingly, 
+these distributions also fool any query algorithm using $k$ queries. 
+
+\todowrite{Definitions of query algorithms in introduction}
+
+\begin{theorem}
+Let $\A$ be a query algorithm using at most $k$ queries on $\{0, 1\}^n$, 
+let $\D$ be the distribution of $n$ independent 
+Bernoulli variables with probability $p$ on $\{0, 1\}^n$, and let
+$\D'$ be a $k$-wise independent probability $p$ Bernoulli distribution on $\{0, 1\}^n$. Then:
+$$
+\Probsub{x \samplefrom \D}{\A(x) = 1} = \Probsub{x \samplefrom \D'}{\A(x) = 1}.
+$$
+\end{theorem}
+\begin{proof}
+Note that it is sufficient to prove the result assuming $\A$ is a (deterministic) depth-$k$ decision tree,
+since if $\A$ is probabilistic, the result for each of the decision trees resulting from each fixed randomness
+implies the desired result for the probabilistic algorithm.
+
+Let $\mathcal{L}$ be the set of leaves of the decision tree, and for each $u \in \mathcal{L}$,
+let $\A_u(x)$ be equal
+to $1$ if $\A(x) = 1$ and $\A$ ends at leaf $u$ of the tree on input $x$, and $0$ otherwise.
+Note that $\A_u(x)$ is a $k$-junta
+and that $\A(x) = \sum_{u\in \mathcal{L}} \A_u(x)$. Therefore:
+$$
+\EVsub{x \samplefrom \D}{\A(x)} = \sum_{u \in \mathcal{L}} \EVsub{x \samplefrom \D}{\A_u(x)} = \sum_{u \in \mathcal{L}} \EVsub{x \samplefrom \D'}{\A_u(x)} = \EVsub{x \samplefrom \D'}{\A(x)},
+$$
+and we have the desired result since  $\Prob{\A(x) = 1} = \EV{\A(x)}$,
+because $\A(x)$ takes values $0$ and $1$.
+\end{proof}
+
+Now, we show that there is an efficient pseudorandom generator which samples from a $k$-wise
+independent distribution with seed length $O(k \log n)$.
+
+\begin{theorem}
+\label{thm:kwiseindepgen}
+There is a polynomial-time algorithm $\A$ which, given as input integers $n$, $k$ with $n \geq k \geq 1$,
+an integer $p$ with $0 \leq p \leq 2^{\lceil \log_2 n \rceil}$, and $s = k \lceil \log_2 n \rceil$
+random bits, outputs $n$ bits with a $k$-wise independent probability $p/2^{\lceil \log_2 n \rceil}$ 
+Bernoulli distribution.
+\end{theorem}
+\begin{proof}
+Let $q = 2^{\lceil \log_2 n \rceil}$, and let $\F_q$ be the finite field with $q$ elements. 
+
+Let $\mathcal{P}_{k-1}$ be the set of univariate polynomials of degree at most $k-1$ in $\F_q$,
+and let $z_1, \ldots, z_n \in \F_q$ be distinct elements of the field. Define the function 
+$G \colon \mathcal{P}_{k-1} \to \F^n_q$ by
+$$
+G(p) = (p(z_1), \ldots, p(z_n)).
+$$
+We claim that, when $p$ is sampled uniformly at random from $\mathcal{P}_{k-1}$, the distribution
+of $G(p)$ is $k$-wise independent. This is because, for all $I \subset [n]$ with $|I| \leq k$ and 
+all sequences of values $\{x_i\}_{i\in I}$ in $\F_q$, the number of $p \in \mathcal{P}_{k-1}$ so that 
+$p(z_i) = x_i$ for all $i \in I$ is exactly $q^{k-|I|}$, since each polynomial $p \in \mathcal{P}_{k-1}$
+is uniquely determined by its evaluation at $k$ distinct points and conversely each possible sequence 
+of values at $k$ distinct points yields a unique polynomial. Thus:
+$$
+\Prob{\bigwedge_{i\in I} p(z_i) = x_i} = \frac{1}{q^{|I|}} = \prod_{i\in I} \Prob{p(z_i) = x_i},
+$$
+and therefore the $|I|$ events $p(z_i) = x_i$ are independent, as desired. 
+
+Now we describe the generator $\A$. We interpret the seed as the encoding of $k$ elements of $\F_q$,
+determining a polynomial $p \in \mathcal{P}_{k-1}$, and we set the output bit to be $1$ if 
+$f(p(z_i)) \leq p$ and to be $0$ otherwise, where $f$ is some bijection from $\F_q$ to $\{1, \ldots, q\}$.
+Therefore, each bit has probability $p/q$ of being equal to $1$, and the $k$-wise independence of the
+distribution follows from the $k$-wise independence of $G(p)$. 
+\end{proof}
+
+And finally, we can use this pseudorandom generator to derandomize \cref{thm:qarandomizedcs}.
+We do not prove all of the details, since the argument is similar to that of \cref{thm:querylb}
+but with a different probability distribution and with some additional complications. 
+
+\begin{theorem}
+Let $\eps = \eps(n) = 1/(\log n)^{O(1)}$ and let $\delta > 0$ be a sufficiently small constant.
+\todopolish{Clarify value of delta like in previous results}
+There exists a quasipolynomial-time quasipolynomial-list-refuter
+$R$ for $\MAJ_{n,\eps}$ against all query algorithms using $t(n) = o(1/\eps^2)$ queries with probability gap bounded by $1-2\delta$.
+\end{theorem}
+\begin{proofsketch}
+The refuter is as follows: 
+On input $1^n$, set $k = 1/\eps^2$, $q = 2^{\lceil \log_2 n \rceil}$ and run the $k$-wise independent generator from \cref{thm:kwiseindepgen}
+for all of the $2^{O(k \log n)} = 2^{\polylog(n)}$ seeds for each of 
+$p = p_+ = \left\lceil q \cdot (1/2 + 2\eps) \right\rceil$ and
+$p = p_- = \left\lfloor q \cdot (1/2 - 2\eps) \right\rfloor$. 
+Output all the results which satisfy the at least $(1/2+\eps)n$ ones or at most $(1/2-\eps)n$ ones promise. 
+
+Consider the uniform probability distribution on the outputs of the refuter $\D_1$. 
+This distribution is statistically close to the uniform distribution $\D_2$ on all the outputs
+of the generator, without filtering those that do not satisfy the promise, since there are 
+very few that do not satisfy the promise 
+(a fraction of around $\Probsub{X \sim \text{Bin}(n, p_+/q)}{X < (1/2+\eps)n}$).
+In turn, distribution $\D_2$ is indistinguishable by algorithms making $t(n)$ queries
+from the corresponding distribution $\D_3$ in which either all $n$ bits are sampled from
+independent Bernoullis with probability $p_+/q$ or all $n$ bits are sampled from Bernoullis with
+probability $p_-/q$, each of the two options with probability $1/2$. 
+And finally, distribution $\D_3$ is statistically close to distribution $\D_4$, which is distribution 
+$\D_3$ conditioned on the output satisfying the promise. We conclude that query algorithms using $t(n)$
+queries can not distinguish between distributions $\D_1$ and $\D_4$ except with some small probability
+(exponentially small in $n$, in fact). \todowrite{Verify this claim.}
+
+Distribution $\D_4$ is a symmetric distribution on $X^+_\eps \cup X^-_\eps$, 
+and with similar arguments as in \cref{thm:querylb} 
+we can prove that query algorithms with error probability $2\delta$ with inputs 
+over distribution $\D_4$ require $\Omega(1/\eps^2)$ queries. Therefore, algorithms
+with probability gap bounded by $1-2\delta$ must fail at least on a fraction $\delta$ of
+inputs from $\D_4$. Therefore, they must also fail at a constant fraction of inputs from $\D_1$
+and in particular they will fail for at least one of the elements outputted by $R(1^n)$, for $n$ big enough.
+
+\end{proofsketch}
+
+\todowrite{Write conclusion relating it to observations of the previous section.}
+
+\subsection{Explicit Obstructions Do Not Work For Sufficiently }

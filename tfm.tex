@@ -56,7 +56,13 @@
 \newcommand{\D}{\calD}
 \newcommand{\Prob}[1]{\text{Pr}\left[#1\right]}
 \newcommand{\Probsub}[2]{\text{Pr}_{#1}\left[#2\right]}
+\newcommand{\EV}[1]{\mathbb{E}\left[#1\right]}
+\newcommand{\EVsub}[2]{\mathbb{E}_{#1}\left[#2\right]}
 \newcommand{\samplefrom}{\leftarrow}
+\newcommand{\F}{\mathbb{F}}
+
+\newenvironment{proofsketch}{%
+  \renewcommand{\proofname}{Proof sketch}\proof}{\endproof}
 
 \newcommand{\complexityclass}[1]{\mathsf{#1}}
 \newcommand{\PTIME}{\complexityclass{P}}

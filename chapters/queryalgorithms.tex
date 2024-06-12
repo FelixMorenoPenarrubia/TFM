@@ -39,48 +39,148 @@ This will allow us to obtain a constructive separation.
 
 \subsection{Proof of Lower Bounds for Random Inputs}
 
-Fix $n$ and $\eps$, and let
-$X^+_\eps = \{x \in \{0, 1\}^n | w_1(x) \geq (\frac{1}{2}+\eps )n \}$
+
+
+\begin{definition}
+A probability distribution $\calD$ on $\{0, 1\}^n$ has \emph{homogeneous
+symmetry} if for every $y \in \{0, 1\}^*$ and every pair of subsets $S, S' \subset [n]$
+with $|S| = |S'| = |y|$, 
+$\Probsub{x \samplefrom \calD}{x[S] = y} = \Probsub{x \samplefrom \calD}{x[S'] = y}$.
+That is, the probability $\Probsub{x \samplefrom \calD}{x[S] = y}$ does not depend
+on the set $S$. Denote by $F_{\calD}(y)$ the probability
+$\Probsub{x \samplefrom \D}{x[S] = y}$ for any $S$ with $|S| = |y|$.
+
+A probability distribution $\calD$ on $\{0, 1\}^n$ has \emph{complementary symmetry} if for every
+$y in \{0, 1\}^n$, $\Probsub{x \samplefrom \D}{x = y} = \Probsub{x \samplefrom \D}{x = \complementary{y}}$,
+where $\complementary{y}$ is the complementary vector of $y$.
+
+A probability distribution $\D$ on $\{0, 1\}^n$ is \emph{symmetric} if it has homogeneous symmetry
+and it has complementary symmetry. 
+\end{definition}
+
+Fix $n$ and $\eps$, and let $X^+_\eps = \{x \in \{0, 1\}^n | w_1(x) \geq (\frac{1}{2}+\eps )n \}$
 and $X^-_\eps = \{x \in \{0, 1\}^n | w_1(x) \leq (\frac{1}{2}-\eps )n \}$.
+For $\calD$ a probability distribution on $\{0, 1\}^n$ for which
+the events $x \in X^+_\eps$ and $x \in X^-_\eps$ have nonzero probability (where $x$
+is the string of $n$ bits sampled by the distribution), 
+denote by $\calD^+$ the probability distribution conditioned on $x \in X^+_\eps$,
+and by $\calD^-$ the probability distribution conditioned on $x \in X^-_\eps$.
+
 \todowrite{define w1, etc in introduction}
 
-For $\calD$ a probability distribution on $X^+_\eps \cup X^-_\eps$, denote
-by $\calD^+$ the probability distribution conditioned on $x \in X^+_\eps$,
-and by $\calD^-$ the probability distribution conditioned on $x \in X^-_\eps$.
-We say that a probability distribution $\calD$ on $X^+_\eps \cup X^-_\eps$ is
-symmetric if for every $y \in \{0, 1\}^*$ and every pair of subsets $S, S' \subset [n]$
-with $|S| = |S'| = y$, 
-$\Probsub{x \samplefrom \calD^+}{x[S] = y} = \Probsub{x \samplefrom \calD^+}{x[S'] = y}$ and
-$\Probsub{x \samplefrom \calD^-}{x[S] = y} = \Probsub{x \samplefrom \calD^-}{x[S'] = y}$.
-That is, the probability $\Probsub{x \samplefrom \calD^+}{x[S] = y}$ does not depend
-on the set $S$: denote by $F_{\calD}^+(y)$ the probability
-$\Probsub{x \samplefrom \D}{x[S] = y | x \in X^+_{\eps}}$ and by $F_{\calD}^-(y)$ the probability
-$\Probsub{x \samplefrom \D}{x[S] = y | x \in X^-_{\eps}}$. 
-
 \begin{lemma}
-\label{lem:symmetricproperties}
-Let $\calD$ be a symmetric distribution on $X^+_\eps \cup X^-_\eps$.
+\label{lem:symproperties}
+Let $\calD$ be a distribution on $\{0, 1\}^n$ which has homogeneous symmetry.
 
 \begin{enumerate}
-    \item The probabilities $F_{\calD}^+(y)$ and $F_{\calD}^-(y)$ only depend on the number of ones and zeros
-    of $y$: $F_{\calD}^+(y) = f_{\D}^+(w_0(y), w_1(y)), F_{\D}^-(y) = f_{\D}^-(w_0(y), w_1(y))$.
-    \item $f^+(a, b) = f^-(b, a)$ for all $a, b \geq 0$. 
-    \item If $a \leq b$, then $f^-_\D(a, b) \leq f^+_\D(a, b)$.
+    \item The probability $F_{\calD}(y)$ only depends on the number of zeros and ones
+    of $y$: $F_{\calD}(y) = F_{\D}(0^{w_0(y)}1^{w_1(y)})$. We will denote by $f_\D(a, b)$ the value of $F_{\D}(0^a 1^b)$.
+    \item If the events $x \in X^+_\eps$ and $x \in X^-_\eps$ have nonzero probability
+    (i.e. $\D^+$ and $\D^-$ are well-defined),
+    \todopolish{Find a way to phrase this without the awkward variable $x$?}
+    the distributions $\D^+$ and $\D^-$ have homogeneous symmetry. 
+    \item If $\D^+$ and $\D^-$ are well-defined and $a \leq b$, then $f_{\D^+}(b, a) \leq f_{\D^+}(a, b)$.
+    \item If $\D$ has complementary symmetry and $\D^+$ and $\D^-$ are well-defined, then  
+    $f_{\D^+}(a, b) = f_{\D^-}(b, a)$ for all
+    $a, b \geq 0$.
 \end{enumerate}
 \end{lemma}
 \begin{proof}
-    TODO. \todowrite{prove symmetric distribution lemma}
+   Let us prove the first item. For $|y| = 1$ it is clear that
+   the value of $F_{\D}(y)$ only depends the number of zeros and ones of $y$, since
+   $y = 0$ or $y = 1$.  Now we want to prove that for every $y$ with $|y| \geq 2$,
+   $F_\D(y) = F_\D(0^{w_0(y)}1^{w_1(y)})$. To prove that, it is enough to prove that we
+   can perform ``swaps'' for any substring $10$ in $y$, that is, that if $y = y_0 \concat 10 \concat y_1$,
+   then $F_\D(y_0 \concat 10 \concat y_1) = F_\D(y_0 \concat 01 \concat y_1)$. By a sequence of such swaps, we can always reach the 
+   string $0^{w_0(y)}1^{w_1(y)}$. This is proved as follows:  
+   \begin{align*}
+   F_\D(y_0 \concat 10 \concat y_1) & = \Prob{x[S] = y_0 \concat 10 \concat y_1} \\
+                                    & = \Prob{x[S] = y_0 \concat 10 \concat y_1} 
+                                    + \Prob{x[S] = y_0 \concat 00 \concat y_1}
+                                    - \Prob{x[S] = y_0 \concat 00 \concat y_1} \\
+                                    & = \Prob{x[S \setminus \{i\}] = y_0 \concat 0 \concat y_1}
+                                    - \Prob{x[S] = y_0 \concat 00 \concat y_1} \\
+                                    & = \Prob{x[S \setminus \{j\}] = y_0 \concat 0 \concat y_1}
+                                    - \Prob{x[S] = y_0 \concat 00 \concat y_1} \\
+                                    & = \Prob{x[S] = y_0 \concat 01 \concat y_1} 
+                                    + \Prob{x[S] = y_0 \concat 00 \concat y_1}
+                                    - \Prob{x[S] = y_0 \concat 00 \concat y_1} \\
+                                    & = F_\D(y_0 \concat 01 \concat y_1),
+   \end{align*}
+   where $i$ and $j$ are the indices of $S$ corresponding to the $10$ subsequence. 
+
+Second item:
+\begin{align*}
+    \Probsub{x \samplefrom \D^+}{x[S] = y} & = \Probsub{x \samplefrom \D}{x[S] = y | x \in X^+_\eps} \\
+        & = \sum_{\substack{z\in X^+_\eps \\ z[S] = y}} \Probsub{x \samplefrom \D}{x = z} \\
+        & = \sum_{\substack{z\in X^+_\eps \\ z[S] = y}} F_{\D}(0^{w_0(z)}1^{w_1(z)})
+        && (\text{first item on set } S = [n])\\
+        & = \sum_{\substack{z\in X^+_\eps \\ z[S'] = y}} F_{\D}(0^{w_0(z)} 1^{w_1(z)}) \\
+        & = \Probsub{x \samplefrom \D^+}{x[S'] = y}.
+\end{align*}
+
+Third item:
+    \begin{align*}
+        f_{\D^+}(b, a) & = \Probsub{x \samplefrom \D^+}{x[[a+b]] = 0^b1^a} \\
+        & = \frac{1}{\binom{n}{a+b}\binom{a+b}{b}} \sum_{S \in \binom{[n]}{a+b}} 
+        \sum_{\substack{y \in \{0, 1\}^{a+b}\\w_0(y)=b}} 
+        \Probsub{x \samplefrom \D^+}{x[S] = y}
+        && (\text{homog. sym.}) \\
+        & = \frac{1}{\binom{n}{a+b}\binom{a+b}{b}} 
+        \sum_{S \in \binom{[n]}{a+b}} 
+        \sum_{\substack{y \in \{0, 1\}^{a+b}\\w_0(y)=b}} 
+        \sum_{\substack{z\in X^+_\eps\\z[S]=y}} \Probsub{x \samplefrom \D^+}{x = z} \\
+        & = \frac{1}{\binom{n}{a+b}\binom{a+b}{b}}
+        \sum_{z \in X^+_\eps} \binom{w_0(z)}{b} \binom{w_1(z)}{a} \Probsub{x \samplefrom \D^+}{x = z}
+        && (\text{swap sums}) \\
+        & \leq \frac{1}{\binom{n}{a+b}\binom{a+b}{b}}
+        \sum_{z \in X^+_\eps} \binom{w_0(z)}{a} \binom{w_1(z)}{b} \Probsub{x \samplefrom \D^+}{x = z}
+        && (*) \\
+        & = f_{\D^+}(a,b),
+    \end{align*}
+    where the inequality at $(*)$ uses that if $x \leq y$ and $a \leq b$, then 
+    $\binom{x}{a} \binom{y}{b} \geq \binom{x}{b} \binom{y}{a}$.
+
+Fourth item:
+\begin{align*}
+    f_{\D^+}(a, b) & = \Probsub{x \samplefrom \D}{x[[a+b]] = 0^a1^b | x \in X^+_\eps} \\
+    & = \frac{1}{\Probsub{x \samplefrom \D}{x \in X^+_\eps}}
+    \sum_{\substack{y \in X^+_\eps\\y[[a+b]] = 0^a1^b}} \Probsub{x \samplefrom \D}{x = y} \\
+    & = \frac{1}{\Probsub{x \samplefrom \D}{x \in X^-_\eps}}
+    \sum_{\substack{y \in X^-_\eps\\y[[a+b]] = 1^a0^b}} \Probsub{x \samplefrom \D}{x = y} 
+    && (\text{comp. sym.})\\
+    & = \Probsub{x \samplefrom \D}{x[[a+b]] = 1^a0^b | x \in X^-_\eps} = f_{\D^-}(b, a).
+\end{align*}
+
+
 \end{proof}
+
+
+
+%\begin{lemma}
+%\label{lem:comsymproperties}
+%Let $\D$ be a symmetric distribution on $\{0, 1\}^n$ for which the distributions
+%$\D^+$ and $\D^-$ are well-defined.
+%Then:
+%\begin{enumerate}
+%\item
+
+%\end{enumerate}
+%\end{lemma}
+
+%\begin{proof}
+%\end{proof}
+
 
 \begin{lemma}
 \label{lem:symmetricbound}
-Let $\calD$ be a symmetric distribution on $X^+_\eps \cup X^-_\eps$,
+Let $\calD$ be a symmetric distribution supported on $X^+_\eps \cup X^-_\eps$,
  and let $\A$ be a probabilistic query algorithm
 that always does $t$ queries and solves $\MAJ$ with error probability $\delta$ 
 on inputs sampled from $\calD$. 
 Then:
 $$
-\sum_{i=0}^{\lceil t/2 \rceil-1} \binom{t}{i} f^+_{\D}(i, t-i) \leq \delta.
+\sum_{i=0}^{\lceil t/2 \rceil-1} \binom{t}{i} f_{\D^+}(i, t-i) \leq \delta.
 $$
 \end{lemma}
 \begin{proof}
@@ -107,32 +207,34 @@ Now note the following:
     Hence $\Probsub{x,r}{A(x) = 0 | Y = y, x \in X^+_\eps} = \Probsub{r}{\A(x) = 0 | Y = y}$.
     We denote this probability by $G_\A(y)$.
     \item Since $\D$ is symmetric, the event $Y = y$ does not depend on the
-    randomness $r$ of the algorithm and in fact $\Prob{Y = y | x \in X^+_\eps} = F^+_{\D}(y)$.
+    randomness $r$ of the algorithm and in fact $\Prob{Y = y | x \in X^+_\eps} = F_{\D^+}(y)$.
     This is because, fixing some randomness $r$ in the algorithm, the event that the sequence
     of $t$ sample points is equal to $y$ is equivalent to the event that a subsequence of
     $x[S]$ of $x$ of size $t$ is equal to a particular permutation of $\sigma(y)$ of $y$. 
-    By \cref{lem:symmetricproperties}, this probability does not depend on $S$ or $\sigma$.
+    By \cref{lem:symproperties} (1), this probability does not depend on $S$ or $\sigma$.
 \end{itemize}
 
 Thus, 
 
 $$
-P^+ = \sum_{y \in \{0, 1\}^t} F^+_\D(y) \cdot G_\A(y).
+P^+ = \sum_{y \in \{0, 1\}^t} F_{\D^+}(y) \cdot G_\A(y).
 $$
 
 Similarly:
 
 $$
-P^- = \sum_{y \in \{0, 1\}^t} F^-_\D(y) \cdot (1-G_\A(y)).
+P^- = \sum_{y \in \{0, 1\}^t} F_{\D^-}(y) \cdot (1-G_\A(y)).
 $$
 
-Adding them and applying \cref{lem:symmetricproperties}, we get the desired result:
+Adding them and applying \cref{lem:symproperties}, we get the desired result:
 \begin{align*}
 \delta & \geq \frac{1}{2}\left(P^+ + P^-\right) \\
-        & = \frac{1}{2}\sum_{y \in \{0, 1\}^t} F^+_\D(y) \cdot G_\A(y) + F^-_\D(y) \cdot (1-G_\A(y)) \\ 
-        & \geq \frac{1}{2}\sum_{y \in \{0, 1\}^t} \min \{F^+_\D(y), F^-_\D(y)\} \\
-        & = \frac{1}{2}\sum_{i=0}^{t} \binom{t}{i} \min \{f^+_\D(i, t-i), f^+_\D(t-i, i)\} \\
-        & \geq \sum_{i=0}^{\lceil t/2 \rceil-1} \binom{t}{i} f^+_\D(i, t-i).
+        & = \frac{1}{2}\sum_{y \in \{0, 1\}^t} F_{\D^+}(y) \cdot G_\A(y) + F_{\D^-}(y) \cdot (1-G_\A(y)) \\ 
+        & \geq \frac{1}{2}\sum_{y \in \{0, 1\}^t} \min \{F_{\D^+}(y), F_{\D^-}(y)\} \\
+        & = \frac{1}{2}\sum_{i=0}^{t} \binom{t}{i} \min \{f_{\D^+}(i, t-i), f_{\D^+}(t-i, i)\} 
+        && (\text{\cref{lem:symproperties} (4)})\\
+        & \geq \sum_{i=0}^{\lceil t/2 \rceil-1} \binom{t}{i} f_{\D^+}(i, t-i).
+        && (\text{\cref{lem:symproperties} (3)})
 \end{align*}
 
 \end{proof}
@@ -160,15 +262,15 @@ For each $n$, the uniform distribution $U_{S_n}$ on $S_n$ is a symmetric distrib
 Therefore, by \cref{lem:symmetricbound}, we have:
 
 $$
-\sum_{i=0}^{\lceil t/2 \rceil-1} \binom{t}{i} f^+_{U_{S_n}}(i, t-i) \leq \delta(n).
+\sum_{i=0}^{\lceil t/2 \rceil-1} \binom{t}{i} f_{U^+_{S_n}}(i, t-i) \leq \delta(n).
 $$
 
-Let $k = \lceil(1/2+\eps)n\rceil$. We can compute $f^+_{U_{S_n}}$:
+Let $k = \lceil(1/2+\eps)n\rceil$. We can compute $f_{U^+_{S_n}}$:
 
 
 \begin{equation}
 \label{eq:fcalc}
-f^+_{U_{S_n}}(w, t-w) = \frac{\binom{n-t}{k-w}}{\binom{n}{k}} = \frac{(n-t)!k!(n-k)!}{n!(k-w)!(((n-k)-(t-w))!}
+f_{U^+_{S_n}}(w, t-w) = \frac{\binom{n-t}{k-w}}{\binom{n}{k}} = \frac{(n-t)!k!(n-k)!}{n!(k-w)!(((n-k)-(t-w))!}
     = \frac{(k)_w}{(n)_w} \frac{(n-k)_{t-w}}{(n-w)_{t-w}}
 \end{equation}
 
@@ -202,13 +304,13 @@ $$
 Substituting in \eqref{eq:fcalc}, we have:
 
 $$
-f^+_{U_{S_n}}(w, t-w)  \geq \frac{1}{2} \left(\frac{k}{n}\right)^w \left(\frac{n-k}{n} \right)^{t-w}
+f_{U^+_{S_n}}(w, t-w)  \geq \frac{1}{2} \left(\frac{k}{n}\right)^w \left(\frac{n-k}{n} \right)^{t-w}
 $$
     
 So that:
 
 \begin{align*}
-\delta & \geq \sum_{i=0}^{\lceil t/2 \rceil-1} \binom{t}{i} f^+_{U_{S_n}}(i, t-i) \\
+\delta & \geq \sum_{i=0}^{\lceil t/2 \rceil-1} \binom{t}{i} f_{U^+_{S_n}}(i, t-i) \\
        & \geq \sum_{i=0}^{\lceil t/2 \rceil-1} \frac{1}{2} \binom{t}{i} \left(\frac{k}{n}\right)^i \left(\frac{n-k}{n} \right)^{t-i} \\
        & = \frac{1}{2} \Probsub{X \sim \text{Bin}(t, k/n)}{X < \left\lceil \frac{t}{2} \right\rceil}
 \end{align*}
@@ -401,4 +503,4 @@ and in particular they will fail for at least one of the elements outputted by $
 
 \todowrite{Write conclusion relating it to observations of the previous section.}
 
-\subsection{Explicit Obstructions Do Not Work For Sufficiently }
+\subsection{An Observation on Explicit Obstructions}

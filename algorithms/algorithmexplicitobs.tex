@@ -1,0 +1,34 @@
+\Input $n$
+\Program
+\State $L \gets R(1^n)$
+\State $(L^+, L^-) \gets \Call{Filter}{L}$ \Comment{$L^+$ are the elements of $L$ with $\geq (1/2+\eps)$ ones, $L^-$ the ones with $\leq (1/2-\eps)n$ ones}
+\While{$L^+ \neq \emptyset$ and $L^- \neq \emptyset$}
+    \State $m^+ \gets \Call{Majority}{L^+}$
+    \State $m^- \gets \Call{Majority}{L^-}$
+    \If{$m^+ \neq m^-$}
+        \State $i \gets $ index such that $m^+_i \neq m^-_i$.
+        \State $v \gets \Call{Query}{i}$
+        \State $(L^+, L^-) \gets \Call{Update}{i, v, (L^+, L^-)}$ \Comment{Returns elements from the lists consistent with $x[i] = v$}
+        %\State $L^- \gets \Call{Update}(i, v, L^-)$
+    \Else
+        \State $S_0 \gets \{i : m^+_i = 0\}$
+        \State $S_1 \gets \{i : m^+_i = 1\}$
+        \State $c \gets \operatorname*{argmax}_{i\in\{0, 1\}} |S_i|$
+        \State $\texttt{found} \gets \texttt{false}$
+        \RepeatTimes{$\lceil (\log (6 \log |L|)) \cdot 1/\eps \rceil$}
+            \State $i \gets \Call{RandomElement}{S_c}$
+            \State $v \gets \Call{Query}{i}$
+            \State $(L^+, L^-) \gets \Call{Update}{i, v, (L^+, L^-)}$ 
+            \If{$v \neq c$}
+                %\State $L^- \gets \Call{Update}(i, v, L^-)$
+                \State $\texttt{found} \gets \texttt{true}$
+            \EndIf
+        \EndRepeatTimes
+        \If{not $\texttt{found}$} 
+            \Output $c$
+            \Halt
+        \EndIf
+    \EndIf
+\EndWhile
+\Output $0$ if $L^+ = \emptyset$, $1$ if $L^- = \emptyset$
+\Halt

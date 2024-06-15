@@ -366,7 +366,47 @@ those conditions.
 
 \subsection{Refuters for $t \leq C/\eps$}
 
-Explain that for query algorithms making $o(1/\eps)$ queries, explicit-obstructions refuters exist.
+In \cref{thm:csrefuterqa}, we need a refuter against $k$-juntas for $k = \Omega(1/\eps^{1+\delta})$ for any $\delta > 0$ in order 
+to obtain a breakthrough. This condition is tight in the sense that we can easily construct list-refuters
+for any query algorithms making less than
+$C/\eps$ queries (for some $C$ depending on the probability gap of the algorithms).
+
+\begin{theorem}
+    \label{thm:refuterlessqueries}
+Let $\eps(n)$ be a function so that $\eps(n) = o(1)$, $\eps(n) > 1/n$ and
+ the integer $1/\eps$ is computable in polynomial time in $n$. 
+There exists a polynomial-time 
+algorithm $R$ that, on input $1^n$,
+outputs a list of $O(1/\eps)$ strings of length $n$, 
+so that every query algorithm using $\frac{1}{16\eps}$ queries
+fails on one of the strings in the list with probability at least $1/3$.
+\end{theorem}
+\begin{proof}
+The algorithm $R$ outputs $1 + \left\lfloor \frac{n}{4 \lceil \eps n \rceil}\right\rfloor$ strings.
+
+The first string consist of $\lfloor (1/2 - \eps)n \rfloor$ ones, followed by zeros. 
+The $i$-th next string ($1 \leq i \leq \left\lfloor\frac{n}{4 \lceil \eps n \rceil}\right\rfloor$)
+consists of $\lfloor (1/2-\eps)n \rfloor$ ones followed by zeros in all positions except for 
+the block from position
+$\lfloor (1/2)n \rfloor +  (i-1) \cdot 2 \lceil \eps n \rceil$ to 
+$\lfloor (1/2)n \rfloor +  i \cdot 2 \lceil \eps n \rceil - 1$.
+That is, each string has a block of $2\lceil \eps n \rceil$ consecutive ones on its right half,
+disjoint with the blocks of all other strings. 
+
+Let $\A$ be any query algorithm as in the statement, and consider its execution on the first string.
+With any fixed randomness $r$ for which $\A$ answers correctly on that string, 
+it will answer incorrectly on at least half of the remaining 
+$\left\lfloor \frac{n}{4 \lceil \eps n \rceil}\right\rfloor < \frac{1}{8\eps}$ strings,
+since $\A$ can hit at most $\frac{1}{16\eps}$ distinct blocks with its queries.
+Therefore, if $\A$ answers correctly on the first string with probability at least $2/3$, 
+it will answer incorrectly with probability at least $1/3$ on at least one of the other strings.  
+
+\end{proof}
+
+Note that this is an ``explicit obstructions'' result: the list refuter does not depend on the algorithm being refuted. 
+Note also that the refuter works for any query algorithm, not just juntas, and also
+the refuter is quite simple and therefore can be implemented in restricted circuit models if
+they allow computation of $1/\eps$ and simple arithmetic operations with it. 
 
 \subsection{Derandomization of Query Algorithms and Refuters for $\eps = 1/\polylog(n)$}
 
@@ -464,6 +504,7 @@ We do not prove all of the details, since the argument is similar to that of \cr
 but with a different probability distribution and with some additional complications. 
 
 \begin{theorem}
+    \label{thm:refutergreatereps}
 Let $\eps = \eps(n) = 1/(\log n)^{O(1)}$ and let $\delta > 0$ be a sufficiently small constant.
 \todopolish{Clarify value of delta like in previous results}
 There exists a quasipolynomial-time quasipolynomial-list-refuter
@@ -503,4 +544,99 @@ and in particular they will fail for at least one of the elements outputted by $
 
 \todowrite{Write conclusion relating it to observations of the previous section.}
 
-\subsection{An Observation on Explicit Obstructions}
+\subsection{Limits of Explicit Obstructions}
+
+One salient aspect of the list-refuters described 
+in the two previous subsections is that they are explicit
+obstructions: they do not depend on the algorithm being refuted. 
+This is much more restrictive than the requirement to obtain
+a breakthrough in \cref{thm:csrefuterqa}, in which the refuters are allowed to
+depend on the algorithm being refuted. The following results displays
+the limits of explicit obstructions for this problem:
+
+\begin{theorem}
+    \label{thm:explicitlimits}
+Let $R$ be an algorithm that, on input $1^n$, outputs a list $L = L_n$ of strings of size $n$ in time $\poly(|L|)$.
+There is a probabilistic query algorithm $\A$ running in time $\poly(n, |L|, 1/\eps)$ and making $O\left(\frac{\log (|L|) \cdot \log (\log (|L|))}{\eps}\right)$ queries
+which correctly solves $\MAJ_{n, \eps}$ with probability at least $2/3$ on each of the outputs produced by $R$.
+\end{theorem}
+\begin{proof}
+
+The algorithm $\A$ is described in \cref{alg:explicitlimits}. First, $\A$ computes $L$ and divides it into
+$L^+$ and $L^-$, depending on whether the majority is $1$ or $0$. $L^+$ and $L^-$ will mantain at all times the elements
+of the list that are consistent with the information obtained by the queries. If at any point
+$L^+$ or $L^-$ becomes empty, the answer is determined and the algorithm can output it and stop. 
+
+\begin{algorithm}
+\caption{Algorithm for \cref{thm:explicitlimits}}\label{alg:explicitlimits}
+\begin{algorithmic}
+\input{algorithms/algorithmexplicitobs.tex}
+\end{algorithmic}
+\end{algorithm}
+    
+
+$\A$ computes $m^+$ and $m^-$, the bitwise majority of all the elements of $L^+$ and $L^-$, respectively.
+That is, for each $i = 1, \ldots, n$, $m^+_i$ is equal to $1$ if there are more elements of $L^+$ with $i$-th bit
+equal to $1$ than elements with $i$-th bit equal to $0$, and is equal to $0$ otherwise. If $m^+ \neq m^-$, $\A$
+queries one of the bits where $m^+$ and $m^-$ differ, discards the elements of $L^+$ and $L^-$ inconsistent with 
+this information and starts over again. Note that this will result in halving the size of $L^+$ or $L^-$. 
+
+If $m^+ = m^-$, then $\A$ determines the sets of indices where both $L^+$ and $L^-$ have majority $0$ 
+and where they both have majority $1$ and samples $\lceil (\log (6 \log |L|)) \cdot 1/\eps \rceil$ random points
+from the biggest set of those two. If all the sampled points coincide with the majority value on that 
+set, $\A$ outputs the answer corresponding to that value. Otherwise, $\A$ starts over again; note that in
+this case, the sizes of both $L^+$ and $L^-$ are halved.  
+
+We proceed to the analysis of the algorithm. We have to argue that it performs $O(\log |L| \log \log |L| / \eps)$ queries, and
+that it answers correctly with probability at least $2/3$. The bound on the number of queries is clear: 
+the algorithm performs at most $O(\log \log |L| /\eps)$ queries in each iteration of the main loop
+and it does at most $2 \cdot \log |L|$ iterations, since in each iteration the size 
+of $L^+$ or $L^-$ is halved and it exits the loop when one of them becomes empty.
+
+Suppose that we have an $x$ with $\geq (1/2 + \eps)$ ones, and we will bound the probability that $\A$ outputs $0$ (the
+case where $x$ has majority $0$ is symmetric).
+It is clear that if $\A$ exits the loop because $L^-$ has become empty, then it always gives the correct answer.
+Then, $\A$ can only give a wrong answer when it outputs $0$ after sampling $\log (6 \log |L|)/\eps$ points in $S_0$
+and finding that they are all equal to $0$. 
+Note that, if $|S_0| \geq 1/2$, then $x[S_0]$ must have
+at least $\eps n$ bits equal to $1$, and therefore the probability of sampling a bit equal to $1$ is at least $\eps$.
+Therefore, the probability that all sampled bits are equal to $0$ is at most 
+$(1-\eps)^{\log (6 \log |L|)/\eps} \leq \frac{1}{6 \log |L|}$. 
+Since the algorithm performs at most $2 \log |L|$ iterations,
+by the union bound the probability that $\A$ outputs $0$
+is at most $2 \log |L| \cdot \frac{1}{6 \log |L|} = \frac{1}{3}$, as desired. 
+
+
+
+\end{proof}
+
+%Note that if $\eps = 1/(\log n)^{\omega(1)}$ and $|L|$ is quasipolynomial, then $O(1/\eps + \log |L|) = O(1/\eps)$,
+%so the explicit obstructions refuter of \cref{thm:refuterlessqueries} is essentially optimal in this setting,
+%and for algorithms that make $\Omega(1/\eps)$ queries running in time $\poly(n, |L|, 1/\eps)$ there are no explicit obstructions. 
+
+\cref{thm:explicitlimits} shows that any constructive separation for a class of query algorithms including the algorithm described in 
+the statement must necessarily have refuters that depend on the algorithm being refuted. 
+Note that if $\eps = 1/(\log n)^{\omega(1)}$ and $|L|$ is quasipolynomial, then $O((\log |L| \log \log |L|)/\eps) = o(1/\eps^{1+\delta})$ for all 
+$\delta > 0$. 
+This suggests that that refuters that would achieve the breakthroughs of \cref{thm:csrefuterqa},
+if they exist, should depend on the algorithm being refuted.
+However, there are some details that could potentially make this not be the case: recall that
+in \cref{thm:csrefuterqa} we only require refuters against uniform distributions of $k$-juntas
+running in time $\poly(1/\eps)$,
+while in \cref{thm:explicitlimits} the algorithm is an adaptive
+query algorithm running in time $\poly(n, |L|, 1/\eps)$. 
+
+There seems to be some room for improvement in \cref{thm:explicitlimits}.
+There is a $\log (1/\eps) \log \log (1/\eps)$ gap between the number of 
+queries in the algorithms refuted by the explicit obstructions of \cref{thm:refuterlessqueries}
+and the number of queries in the 
+algorithm $\A$ of \cref{thm:explicitlimits}.
+The repeated sampling of $O(\log \log |L|/\eps)$ points seems to be somewhat wasteful, and 
+perhaps with a different approach we could be able to get an $\A$ which makes e.g. $O(1/\eps + \log |L|)$ queries, 
+which would close this gap.
+It also seems feasible to eliminate the adaptivity of the queries by allowing $m^+$ and $m^-$
+to differ in a small number of bits.  
+
+\begin{question}
+What is the precise frontier of explicit obstructions for $\MAJ_{n, \eps}$? Can we improve \cref{thm:explicitlimits} or \cref{thm:refuterlessqueries}?
+\end{question}

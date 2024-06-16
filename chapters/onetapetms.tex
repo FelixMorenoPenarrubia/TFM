@@ -58,10 +58,6 @@ input $x$ with non-deterministic choices $b$.
 %accepting execution of $M$ on $x$. 
 \end{definition}
 
-\begin{figure}
-\label{fig:crossingsequences}
-\missingfigure{crossing sequences}
-\end{figure}
 
 When the 1-TM $M$ is clear from context, we will usually write $\CS_i(x)$ instead of $\CS_{M,i}(x)$.
 Also, for a non-deterministic 1-TM $M$ and an accepted word $x$, 
@@ -78,8 +74,6 @@ Intuitively, crossing sequences are a way to quantify the way a machine ``carrie
 side of the boundary to the other one via its internal states. Note that, in a crossing sequence at position
 $i \geq 1$, each odd crossing is from left to right
 and each even crossing is from right to left. 
-See \cref{fig:crossingsequences} for a pictorial depiction of 
-crossing sequences.
 
 \begin{lemma}
     \label{lem:pastingcs}
@@ -99,17 +93,11 @@ $E^b$ between indices $j^b_1$ and $j^b_2$, and so on:
 E^c = ((q^a_1, p^a_1), \ldots, (q^a_{j^a_1-1}, i), (q^b_{j^b_1}, i+1), (q^b_{j^b_1+1}, p^b_{j^b_1+1}), \ldots, \\
 (q^b_{j^b_2-1}, i+1), (q^a_{j^a_2}, i), (q^a_{j^a_2+1}, p^a_{j^a_2+1}), \ldots ).
 \end{multline*}
-See \cref{fig:pastingcs} for an illustration of execution $E^c$. It is not difficult to see that $E^c$ is a 
+It is not difficult to see that $E^c$ is a 
 valid accepting execution for $M$ on input $c$, since the machine behaves as if it were reading input $a$ to the left
 of index $i$ and as if it were reading input $b$ to the right of index $i$. 
 
 \end{proof}
-
-\begin{figure}
-    \label{fig:pastingcs}
-    \missingfigure{pasting together different executions}
-    \caption{Illustration of \cref{lem:pastingcs}.}
-\end{figure}
 
 \begin{corollary}
     \label{cor:crosscollision}
@@ -408,10 +396,7 @@ let $m = m(n) = \min\{\lfloor n^\delta \rfloor,  \lfloor n^{\eps/k} \rfloor \}$ 
     \item[] $\dots$
     \item[] $H_{n-m} \colon \{0, 1\}^{n} \to \{0, 1\}^{m-1}$: $H_{n-m}(x \concat b) = h(H_{n-m-1}(x) \concat b)$.
 \end{itemize}
-
-%See \cref{fig:merkledamgard} for a pictorial depiction. 
-
-\todowrite{figure? (maybe)}
+ 
 
 Take $H = H_{n-m}$. We have to prove that $H$ is a collision-resistant hash function, and that it can be
 computed in time $O(n^{1+\eps})$ in a 1-TM. 
@@ -473,12 +458,6 @@ is done in $O(m^k)$ time. Therefore, the total time complexity is $O(n \cdot m^k
 
 
 \end{proof}
-
-%\begin{figure}
-%    \label{fig:merkledamgard}
-%    \missingfigure{merkle-damgard construction}
-%    \caption{Merkle-Damgård construction.}
-%\end{figure}
 
 \begin{theorem}
     \label{thm:nobppseparation}
@@ -642,8 +621,6 @@ Note that the refuter can be made black-box by learning the regular language rec
 In fact, if we iterate over all automata of size (say) $\log \log n$ and output the counterexample found for each of the
 automata, our algorithm still runs in polynomial time, so we have an explicit obstruction against all $o(n \log n)$ 1-TMs. 
 
-\todoidea{can it be done in logspace??}
-
 \subsection{Refuters Against $O(n \log n)$-time 1-TMs}
 
 One-tape Turing machines running in $n \log n$ time have much more power than finite automata. And non-deterministic machines running in $n \log n$ time
@@ -698,10 +675,6 @@ What this procedure does is to choose a $w$ minimizing the number of prefixes of
 in \texttt{MarkedPrefixes}. It is easier to visualize it by thinking of a binary tree of height $n/2$ whose
 vertices correspond to all binary words of length up to $n/2$, the root being the empty word and the two children
 of each vertex corresponding to the word of the parent concatenated with each of the two characters in the alphabet.
-
-\begin{figure}
-    \missingfigure{Tree of words}
-\end{figure}
 
 In this setting, \texttt{MarkedPrefixes} would correspond to marked vertices in the tree, and we want to find a path
 from the root to a leaf visiting the minimum number of marked vertices. We can compute the minimum number of marked

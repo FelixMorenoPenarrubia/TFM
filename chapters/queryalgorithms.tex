@@ -242,6 +242,7 @@ Adding them and applying \cref{lem:symproperties}, we get the desired result:
 
 \begin{theorem}
 \label{thm:querylb}
+\todo{conditions on eps}
 Let $\A$ be a query algorithm that solves the $\MAJ$ problem on inputs uniformly drawn from 
 $S_n = \{x \in \{0, 1\}^n | w_1(x) \in \{\lfloor(1/2-\eps)n\rfloor, \lceil(1/2+\eps)n\rceil\}\}$ 
 with failure probability $\delta(n)$ using always at most $t(n)$ queries, with $t(n) \leq \frac{1}{4}\sqrt{n}$. 
@@ -275,10 +276,8 @@ f_{U^+_{S_n}}(w, t-w) = \frac{\binom{n-t}{k-w}}{\binom{n}{k}} = \frac{(n-t)!k!(n
     = \frac{(k)_w}{(n)_w} \frac{(n-k)_{t-w}}{(n-w)_{t-w}}
 \end{equation}
 
-Where $(n)_h = \frac{n!}{h!}$ is the falling factorial. We use the following inequalities 
-(TODO references \todonit{references for factorial inequalities})
-    for the falling
-factorial:
+Where $(n)_h = \frac{n!}{h!}$ is the falling factorial. We use the following elementary inequalities 
+for the falling factorial (which follow from the inequality $1+x \leq e^x$):
 
 $$
 n^h e^{-\frac{h^2}{2(n-h)}} \leq (n)_h \leq n^h e^{-\frac{h(h-1)}{2n}}
@@ -316,9 +315,8 @@ So that:
        & = \frac{1}{2} \Probsub{X \sim \text{Bin}(t, k/n)}{X < \left\lceil \frac{t}{2} \right\rceil}
 \end{align*}
 
-By standard bounds on the tail of the binomial distribution,
-(TODO reference and details \todonit{reference for tails of binomial distribution})
-we have that there exists a constant $C$ so that 
+By standard bounds on the tail of the binomial distribution \cite{Feller43},
+if $n$ is large enough and $\eps$ is small enough there exists a constant $C$ so that 
 $\Probsub{X \sim \text{Bin}(t, k/n)}{X < \left\lceil \frac{t}{2} \right\rceil} \geq C e^{-4\eps^2t}$.
 Rearranging, we get our desired result. 
 
@@ -326,11 +324,19 @@ Rearranging, we get our desired result.
 
 \begin{corollary}
 Let $\eps(n)$ be a function satisfying $\eps(n) = \omega(n^{-1/4})$ and $\eps(n) = o(1)$. Then, all query
-algorithms $\A$ solving $\MAJ$ with bounded failure probability for all inputs do at least $\Omega(1/\eps(n)^2)$
-queries. 
+algorithms $\A$ solving $\MAJ_{n,\eps}$ with success probability $2/3$ for all inputs do at least $\Omega(1/\eps(n)^2)$
+queries in the worst case. 
 \end{corollary}
 \begin{proof}
-TODO \todowrite{prove corollary, and state it more precisely too}
+Consider the query algorithm $\A^*$ consisting in repeating algorithm $\A$  multiple times and 
+taking the majority answer, where the number of repetitions is a constant such
+that the failure probability of $\A^*$ is strictly less than 
+the constant $C$ from \cref{thm:querylb}. 
+Algorithm $\A^*$ in particular has failure probability $\delta < C$ on inputs 
+uniformly drawn from $S_n$, so we can apply \cref{thm:querylb} to show that
+$\A^*$ does $\Omega(1/\eps^2)$ queries in the worst case. Note that we need $\eps(n) = \omega(n^{-1/4})$
+for this.
+Since $\A^*$ repeats $\A$ a constant number of times, $\A$ does $\Omega(1/\eps^2)$ queries in the worst case. 
 \end{proof}
 
 \subsection{Randomized Constructive Separation}
@@ -346,9 +352,67 @@ Explain how to make a randomized constructive separation from above (amplify err
 
 \section{Sufficiently Constructive Separations Imply Lower Bounds}
 
-State and prove possible strengthenings of the result of \cite{ConstructiveSeparations}. 
+Recall that in \cite{ConstructiveSeparations}, the following theorem is proved: 
 
 \thmcsrefuterqa*
+
+From the proof we can get a stronger statement, with several improvements that are 
+relevant for studying the best possible refuters in this setting:
+
+\begin{itemize}
+    \item The refuters can be quasipolynomial-size circuits (that is, $\qAC^0$ and 
+    $\qNC^1$ rather than $\AC^0$ and $\NC^1$).
+    \item The refuters can be quasipolynomial-length list-refuters. 
+    \item It is only necessary to refute algorithms making $O(1/\eps^{1+\delta})$ queries,
+    for some $\delta > 0$.
+    \item It is only necessary to refute algorithms which are uniform distributions of
+    $k$-juntas (not general randomized query algorithms).
+\end{itemize}
+
+\todo{Review this after definitions of refuters}
+
+\begin{theorem}
+    Let $\eps$ be a function of $n$ satisfying $\eps \leq 1/(\log n)^{\omega(1)}$, and $1/\eps$ is a positive integer
+    computable in $\poly(1/\eps)$ time given $n$ in binary. Let $\delta > 0$, and let $t = 1/\eps^{1+\delta}$.
+	\begin{itemize}
+		\item If for every uniform distribution of $t$-juntas running in $\poly(1/\eps)$ time there exist
+        a polylogtime-uniform-$\qAC^0$ quasipolynomial-length list-refuter $R$ of $\MAJ_{n, \eps}$ against 
+        $\A$, then $\NP \neq \PTIME$. 
+		\item If for every uniform distribution of $t$-juntas running in $\poly(1/\eps)$ time there exist
+        a polylogtime-uniform-$\qNC^1$-uniform quasipolynomial-length list-refuter $R$ of $\MAJ_{n, \eps}$ against 
+        $\A$, then $\PSPACE \neq \PTIME$. 
+	\end{itemize}
+\end{theorem}
+
+\begin{proof}
+    We will prove only the first item. The proof of the second item is analogous using the 
+    corresponding second item from \cref{lem:acbinarytounary}.
+    Assuming $\PTIME = \NP$, we will construct an algorithm $\A$ running in $\poly(1/\eps)$ time
+    which samples $t$ points uniformly at random and solves the $\MAJ_{n, \eps}$ on the
+    inputs generated by any polylogtime-uniform-$\qAC^0$ list-refuter.
+
+    At the beginning, $\A$ computes $\eps$ in $\poly(1/\eps)$ time. 
+    From \cref{lem:acbinarytounary} \todo{details about how list refuter works here}
+
+    Therefore, there is a circuit of size $(c \log n)^c$ for some constant $c$ which computes
+    the input given the index $i$ in binary. Since $\eps \leq 1/(\log n)^{\omega(1)}$,
+    $(c \log n)^c \leq 1/\eps^{\delta/2}$ for sufficiently large $n$. 
+    The number of circuits of size at most $1/\eps^{\delta/2}$ is $2^{O(\eps^{-\delta/2} \log \eps^{-1})}$.
+    Therefore, this circuit can be PAC-learned with error $\eps/2$ and failure probability 
+    $p = 1/6$ using $O(\eps^{-1} \cdot (\eps^{-\delta/2} \log \eps^{-1} + \log p^{-1})) \leq O(\eps^{-(1+\delta)})$
+    random samples \cite[Theorem 2.5]{Mohri18}. Given that $\PTIME = \NP$, the learning of the circuit 
+    $C$ can be done in $\poly(t, \log n) = \poly(1/\eps)$ time. Let $D$ be the resulting circuit.
+
+    We decide $\MAJ_{n, \eps/2}$ on the output of $D$ by sampling $\Theta(1/\eps^2)$ uniformly random
+    inputs from $D$, so that the probability of success is at least $5/6$, and return the result 
+    as our answer. This takes $\poly(1/\eps)$ time. 
+    Since the circuit $D$ only has error $\eps/2$ 
+    compared with the original input string, the answer of $\MAJ_{n, \eps}$ on the original input
+    string is the same as the answer of $\MAJ_{n, \eps/2}$ on the output of $D$.
+    
+    In total, our algorithm has success probability $2/3$, time complexity $\poly(1/\eps)$, and 
+    sample complexity $O(1/\eps^{1+\delta})$. 
+\end{proof}
 
 \section{Constructive Separations Against Weaker Query Algorithms}
 \label{sec:refuteragainstweakerqa}
@@ -357,7 +421,7 @@ In \cref{thm:csrefuterqa}, there are two important quantitative assumptions
 that must hold in order to obtain a lower bound:
 
 \begin{enumerate}
-    \item We must have a refuter against all $t$-juntas with $t = O(\log \eps^{-1} / \eps^{1+\delta})$ for
+    \item We must have a refuter against all $t$-juntas with $t = O(1 / \eps^{1+\delta})$ for
     some $\delta > 0$.
     \item The function $\eps(n)$ must go to zero sufficiently fast: $\eps(n) = 1/(\log n)^{\omega(1)}$.
 \end{enumerate}
@@ -368,7 +432,7 @@ those conditions.
 
 \subsection{Refuters for $t \leq C/\eps$}
 
-In \cref{thm:csrefuterqa}, we need a refuter against $k$-juntas for $k = \Omega(1/\eps^{1+\delta})$ for any $\delta > 0$ in order 
+In \cref{thm:csrefuterqa}, we need a refuter against $t$-juntas for $t = \Omega(1/\eps^{1+\delta})$ for any $\delta > 0$ in order 
 to obtain a breakthrough. This condition is tight in the sense that we can easily construct list-refuters
 for any query algorithms making less than
 $C/\eps$ queries (for some $C$ depending on the probability gap of the algorithms).
@@ -410,7 +474,7 @@ Note also that the refuter works for any query algorithm, not just juntas, and a
 the refuter is quite simple and therefore can be implemented in restricted circuit models if
 they allow computation of $1/\eps$ and simple arithmetic operations with it. 
 
-\subsection{Derandomization of Query Algorithms and Refuters for $\eps = 1/\polylog(n)$}
+\subsection{Derandomization of Query Algorithms}
 
 One possible approach to obtaining deterministic constructive
 separations is to try to derandomize 
@@ -429,8 +493,6 @@ corresponding to each of the bits are $k$-wise independent.
 We say that a probability distribution $\D$ on $\{0, 1\}^n$ is $k$-wise independent probability $p$ Bernoulli
 if it is $k$-wise independent and $\Prob{x_i = 1} = p$ for all $i =1 , \dots, n$. 
 \end{definition}
-
-\todopolish{Think of better/shorter terms to use to refer to k-wise independent prob p Bernoulli.}
 
 It is clear that $k$-juntas can not distinguish between $k$-wise independent Bernoulli distributions 
 and $n$ independent Bernoulli random variables with the same probability. Interestingly, 

@@ -1,13 +1,156 @@
 \todowrite{Write Chapter 1}
+\section{Background and Motivation}
+
+Computational complexity is a field of mathematics and theoretical computer science 
+which studies computational problems and the resources that are needed to solve them. 
+A central goal of the field is to prove \emph{lower bounds} 
+on the amount of resources necessary to solve certain problems. 
+
+Despite significant efforts over the last 50 years, progress in central 
+problems of the field, such as the $\PTIME$ versus $\NP$ question, has been very limited. 
+However, we do have developed some understanding about the difficulty of those problems.
+This understanding has come in the form of the so-called \emph{barriers},
+most notably the \emph{relativization} barrier \cite{BakerGillSolovay75},
+the \emph{natural proofs} barrier \cite{RazborovRudich97}, and the 
+\emph{algebrization} barrier \cite{AaronsonWigderson09}. 
+These barriers display certain aspects of the results we know how to prove
+(such as $\PTIME \neq \EXP$, $\PTIME \not\subset \AC^0$, and $\IP = \PSPACE$)
+which are implied by the techniques used to prove them, and which are not 
+shared by other results we would like to prove 
+(such as $\PTIME \neq \NP$ or $\NP \not\subset \Ppoly$).
+For example, the relativization barrier shows the diagonalization technique
+used to prove results like $\PTIME \neq \EXP$ proves statements 
+which are true \emph{relative to any oracle}, while $\PTIME \neq \NP$ is not true relative 
+to some oracles. This implies that new techniques other than diagonalization
+need to be used to prove $\PTIME \neq \NP$. 
+
+In this work, we study the ``constructivity'' aspect of lower bound proofs. 
+Informally, a complexity lower bound for a problem
+is \emph{constructive} if for any algorithm not satisfying the lower bounds, 
+we can efficiently construct a counterexample showing that the algorithm
+does not solve the problem, that is, an input in which the algorithm gives a
+wrong answer. 
+
+This kind of ``refuter algorithms'' were first studied by Kabanets \cite{Kabanets01}
+in the context of derandomization, but the first important result in line with the
+philosophy that we are describing here was by Gutfreund, Shaltiel and Ta Shma 
+\cite{Gutfreund05}. They proved that the separation $\PTIME \neq \NP$ is constructive:
+that is, assuming that $\PTIME \neq \NP$, for every polynomial-time algorithm purportedly
+solving $\SAT$ there is an efficient refuter which generates counterexamples against it. 
+
+The original motivation of the \cite{Gutfreund05} was about average-case complexity.
+Their result has a nice interpretation from the perspective of Impagliazzo's five worlds 
+\cite{Impagliazzo95}, a classification of possible ``worlds'' we could live in 
+depending on the truth or falsity of conjectures about average-case complexity 
+and the existence of cryptographic primitives. One possible world, \emph{Algorithmica},
+is the world where $\PTIME = \NP$ and therefore all $\NP$ problems are easy in the worst case.
+Another possible world, \emph{Heuristica}, is the world where $\PTIME \neq \NP$ but all
+$\NP$ problems are easy in the average case, that is, for every efficiently samplable input
+distribution there exists a polynomial-time algorithm which solves the problem on inputs from
+that distribution.
+One could imagine an intermediate world, \emph{Super-Heuristica}, where the quantifiers are reversed
+and we have one algorithm which works for all samplable distributions, despite having $\PTIME \neq \NP$. 
+The results of \cite{Gutfreund05} imply that this world can not exist.
+
+Another motivation for the results of \cite{Gutfreund05} and of subsequent work \cite{Bogdanov10} 
+is more practical: provide hard examples for SAT solvers. SAT solvers, that is, heuristic algorithms
+for SAT, are widely used in scientific and industrial applications.
+The result of \cite{Gutfreund05} provides an algorithm for generating hard instances 
+for those solvers, which may be useful for the purposes of benchmarking their performance. 
+
+A recent article by Chen, Jin, Santhanam and Williams \cite{ConstructiveSeparations} 
+provides motivation for constructivity of lower bounds as a ``barrier-style'' result:
+many lower bounds that we know how to prove are non-constructive, but the lower bounds
+that we would like to prove are constructive. More concretely, in \cite{ConstructiveSeparations}
+they show that:
+
+\begin{enumerate}
+    \item Many important conjectured separations are constructive, including not only $\PTIME \neq \NP$ but
+    also $\PTIME \neq \PSPACE$, $\BPP \neq \NEXP$ and $\ZPP \neq \EXP$.
+    \item Many lower bounds that we know how to prove via non-constructive methods
+    are difficult to make constructive: if a refuter algorithm were found, it would
+    imply breakthrough results in complexity theory that we currently do not know how 
+    to prove, including $\PTIME \neq \NP$!
+\end{enumerate}
+
+In the view of \cite{ConstructiveSeparations}, this is evidence that in order to make progress
+in proving lower bounds, new techniques which are inherently ``algorithmic'' 
+and constructive need to be developed. A similar observation was made by Mulmuley 
+\cite{Mulmuley10} in the context of the ``Geometric Complexity Theory'' program 
+to prove complexity lower bounds using algebraic geometry. 
+
 \section{Overview}
 
-High-level introduction to the topic at hand.
+The starting point of this work is the article \cite{ConstructiveSeparations}. In this work,
+we expose some of its results and also provide some extensions, focusing on the question of
+when can refuters be constructed for problems with known lower bounds.
 
-\section{Preliminaries}
+In \cref{chp:cs}, we expose the contents of \cite{ConstructiveSeparations}, especially those
+results which we will discuss later in the work, providing the necessary technical background 
+for them. \todo{short survey of other results of refuters?}
 
-Definitions of basic concepts we will use in the thesis. 
+In \cref{chp:qa}, we discuss refuters against query algorithms. 
+Given an input $x \in \{0, 1\}^n$, we want to distinguish between the case where $x$ has at
+least $(1/2 + \eps)n$ ones and the case where $x$ has at most $(1/2 - \eps)n$ ones. 
+It is a standard exercise in probability to show that we can do so by randomly sampling $O(1/\eps^2)$
+positions of the string $x$. It is also known, at least since \cite{Canetti95}, that such
+random sampling is the best one can do under very general conditions. That is, there is no
+algorithm that reliably distinguishes between the two cases using only $o(1/\eps^2)$ queries
+to the string. In \cite{ConstructiveSeparations} it is shown that making this lower bound
+constructive would imply $\P \neq \NP$! We discuss this refuters for this
+problem in the chapter, showing a 
+randomized refuter, reproducing the proof of \cite{ConstructiveSeparations} and discussing
+possible variations and strengthenings, and providing deterministic refuters for weaker algorithms. 
+
+In \cref{chp:tm}, we discuss refuters against one-tape Turing machines. 
+The original machine model defined by Turing \cite{Turing36} had only one tape, 
+but in modern computational complexity the model of computation is usually taken
+to be \emph{multi-tape} Turing machines, since one-tape TMs have some 
+unrealistic limitations.
+For example, they require $\Omega(n^2)$ time to regonize palindromes \cite{Hennie65}. 
+In \cite{ConstructiveSeparations}, it is shown that making this lower bound constructive
+would imply breakthrough circuit lower bounds. In the chapter, we discuss refuters
+for the problem of palindromes, showing a randomized refuter, reproducing the proof of 
+\cite{ConstructiveSeparations} with more generality, proving that in some refuters 
+can not exist if we assume the existence of a certain cryptographic primitive, 
+and providing deterministic refuters for weaker one-tape TMs. 
 
 
 \section{Our Countributions}
 
-What is novel in this work.
+This document contains both an exposition of the results of \cite{ConstructiveSeparations}
+(and their background) and some original contributions. 
+
+Our probabilistic refuters exposed in \cref{sec:lbqa} for query algorithms and in \cref{sec:lbtm}
+for Turing Machines can be considered an adapted exposition of the results of 
+\cite{Canetti95} and \cite{Hennie65}, respectively, since we just expose the proof of the lower
+bound and then we make the (simple) observation that it can be turned into a probabilistic refuter.
+This way of looking at these results relates the claims of obtaining breakthroughs via refuters
+of \cite{ConstructiveSeparations} 
+with the derandomization of these probabilistic refuters. 
+Also, we do note that our adaptation of the results of \cite{Canetti95} has in some aspects more
+generality than the original.
+
+Our proof of the non-existence of refuters for one-tape TMs assuming the existence of 
+cryptographic primitives follows directly from an argument in \cite{Oliveira24}. However,
+the context of \cite{Oliveira24} is different (non-provability of lower bounds in
+bounded arithmetic), and we believe the adaptation into the constructive separations context
+is valuable since it shows that specific claims made in \cite{ConstructiveSeparations}
+are vacuous assuming the existence of cryptographic primitives. We explain how to modify the 
+claims to make them non-vacuous even if the relevant cryptographic primitive exists. 
+
+The most novel part of this work is the construction of refuters for weak algorithms,
+developed in \cref{sec:refuteragainstweakerqa} for query algorithms and in
+\cref{sec:refuteragainstweakertm} for one-tape TMs. That is, even if \cite{ConstructiveSeparations}
+shows that providing (deterministic) refuters against algorithms not satisfying the lower bound would
+imply breakthrough results, we do exhibit refuters that work for weaker lower bounds 
+(that is, for more stringent requirements on the number of queries or the time complexity
+of the 1-TM for the algorithms being refuted). We develop a ``frontier'' between the scenarios 
+where refuters can be constructed and the ones where proving their existence would imply 
+a breakthrough result. Often, this frontier is quite tight in the sense that slightly 
+relaxing one of the conditions stated in \cite{ConstructiveSeparations} in order to get 
+a breakthrough result makes a refuter easily constructible. 
+In other cases, though, some small gaps remain. 
+We summarize those cases in the form of ``Open Questions'' that 
+we believe are interesting avenues for further research.
+

@@ -68,6 +68,7 @@
 \newcommand{\PTIME}{\complexityclass{P}}
 \newcommand{\newcomplexityclass}[1]{\expandafter\newcommand\csname #1\endcsname{\complexityclass{#1}}}
 \newcomplexityclass{EXP}
+\newcomplexityclass{NEXP}
 \newcomplexityclass{E}
 \newcomplexityclass{BPP}
 \newcomplexityclass{ZPP}
@@ -77,6 +78,7 @@
 \newcomplexityclass{NC}
 \newcomplexityclass{REG}
 \newcomplexityclass{LOGSPACE}
+\newcomplexityclass{IP}
 
 \newcomplexityclass{SIZE}
 \newcomplexityclass{DTIME}
@@ -84,6 +86,7 @@
 
 \newcommand{\poly}{\text{poly}}
 \newcommand{\polylog}{\text{polylog}}
+\newcommand{\Ppoly}{\PTIME\text{/poly}}
 
 \newcommand{\computationalproblem}[1]{\mathrm{#1}}
 \newcommand{\PAL}{\computationalproblem{PAL}}
@@ -177,14 +180,17 @@
 \input{chapters/introduction}
 
 \chapter{Constructive Separations}
+\label{chp:cs}
 
 \input{chapters/constructiveseparations}
 
 \chapter{Refuters for Query Algorithms}
+\label{chp:qa}
 
 \input{chapters/queryalgorithms}
 
 \chapter{Refuters for One-Tape Turing Machines}
+\label{chp:tm}
 
 \input{chapters/onetapetms}
 

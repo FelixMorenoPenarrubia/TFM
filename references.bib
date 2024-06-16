@@ -193,6 +193,15 @@ location = {Montreal, Quebec, Canada},
 series = {STOC '94}
 }
 
+@article{Impagliazzo95,
+  title={A personal view of average-case complexity},
+  author={Russell Impagliazzo},
+  journal={Proceedings of Structure in Complexity Theory. Tenth Annual IEEE Conference},
+  year={1995},
+  pages={134-147},
+  url={https://api.semanticscholar.org/CorpusID:2154064}
+}
+
 @article{Andreev98,
 author = {Andreev, Alexander E. and Clementi, Andrea E. F. and Rolim, Jos\'{e} D. P.},
 title = {A new general derandomization method},
@@ -243,6 +252,18 @@ abstract="The main motivation of this work is to study the average case hardness
 isbn="978-3-642-38233-8"
 }
 
+@INPROCEEDINGS{Gutfreund05,
+  author={Gutfreund, D. and Shaltiel, R. and Ta-Shma, A.},
+  booktitle={20th Annual IEEE Conference on Computational Complexity (CCC'05)}, 
+  title={If NP languages are hard on the worst-case then it is easy to find their hard instances}, 
+  year={2005},
+  volume={},
+  number={},
+  pages={243-257},
+  keywords={Polynomials;Computer science;Cryptography;Computational complexity;Stress;Information technology;Scholarships;Time measurement;NP-complete problem},
+  doi={10.1109/CCC.2005.11}}
+
+
 @inproceedings{Hatami2023,
   title={Theory of unconditional pseudorandom generators},
   author={Hatami, Pooya and Hoza, William},
@@ -251,11 +272,98 @@ isbn="978-3-642-38233-8"
 }
 
 
-  
 
 
 
-  
+
+
+@article{BakerGillSolovay75,
+author = {Baker, Theodore and Gill, John and Solovay, Robert},
+title = {Relativizations of the P = NP Question},
+journal = {SIAM Journal on Computing},
+volume = {4},
+number = {4},
+pages = {431-442},
+year = {1975},
+doi = {10.1137/0204037},
+
+URL = { 
+    
+        https://doi.org/10.1137/0204037
+    
+    
+
+},
+    abstract = { We investigate relativized versions of the open question of whether every language accepted nondeterministically in polynomial time can be recognized deterministically in polynomial time. For any set X, let \$\mathcal{P}^X (\text{resp. }\mathcal{NP}^X )\$ be the class of languages accepted in polynomial time by deterministic (resp. nondeterministic) query machines with oracle X. We construct a recursive set A such that \$\mathcal{P}^A = \mathcal{NP}^A \$. On the other hand, we construct a recursive set B such that \$\mathcal{P}^B \ne \mathcal{NP}^B \$. Oracles X are constructed to realize all consistent set inclusion relations between the relativized classes \$\mathcal{P}^X \$, \$\mathcal{NP}^X \$, and co \$\mathcal{NP}^X \$, the family of complements of languages in \$\mathcal{NP}^X \$. Several related open problems are described. }
+}
+
+@article{AaronsonWigderson09,
+author = {Aaronson, Scott and Wigderson, Avi},
+title = {Algebrization: A New Barrier in Complexity Theory},
+year = {2009},
+issue_date = {February 2009},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {1},
+number = {1},
+issn = {1942-3454},
+url = {https://doi.org/10.1145/1490270.1490272},
+doi = {10.1145/1490270.1490272},
+abstract = {Any proof of P ≠ NP will have to overcome two barriers: relativization and natural proofs. Yet over the last decade, we have seen circuit lower bounds (e.g., that PP does not have linear-size circuits) that overcome both barriers simultaneously. So the question arises of whether there is a third barrier to progress on the central questions in complexity theory.In this article, we present such a barrier, which we call algebraic relativization or algebrization. The idea is that, when we relativize some complexity class inclusion, we should give the simulating machine access not only to an oracle A, but also to a low-degree extension of A over a finite field or ring.We systematically go through basic results and open problems in complexity theory to delineate the power of the new algebrization barrier. First, we show that all known nonrelativizing results based on arithmetization---both inclusions such as IP = PSPACE and MIP = NEXP, and separations such as MAEXP ⊄ P/poly---do indeed algebrize. Second, we show that almost all of the major open problems---including P versus NP, P versus RP, and NEXP versus P/poly---will require non-algebrizing techniques. In some cases, algebrization seems to explain exactly why progress stopped where it did: for example, why we have superlinear circuit lower bounds for PromiseMA but not for NP.Our second set of results follows from lower bounds in a new model of algebraic query complexity, which we introduce in this article and which is interesting in its own right. Some of our lower bounds use direct combinatorial and algebraic arguments, while others stem from a surprising connection between our model and communication complexity. Using this connection, we are also able to give an MA-protocol for the Inner Product function with O (√nlogn) communication (essentially matching a lower bound of Klauck), as well as a communication complexity conjecture whose truth would imply NL ≠ NP.},
+journal = {ACM Trans. Comput. Theory},
+month = {feb},
+articleno = {2},
+numpages = {54},
+keywords = {query complexity, oracles, interactive proofs, communication complexity, arithmetization, Low-degree polynomials}
+}
+
+@article{RazborovRudich97,
+title = {Natural Proofs},
+journal = {Journal of Computer and System Sciences},
+volume = {55},
+number = {1},
+pages = {24-35},
+year = {1997},
+issn = {0022-0000},
+doi = {https://doi.org/10.1006/jcss.1997.1494},
+url = {https://www.sciencedirect.com/science/article/pii/S002200009791494X},
+author = {Alexander A Razborov and Steven Rudich},
+abstract = {We introduce the notion ofnaturalproof. We argue that the known proofs of lower bounds on the complexity of explicit Boolean functions in nonmonotone models fall within our definition of natural. We show, based on a hardness assumption, that natural proofs can not prove superpolynomial lower bounds for general circuits. Without the hardness assumption, we are able to show that they can not prove exponential lower bounds (for general circuits) for the discrete logarithm problem. We show that the weaker class ofAC0-natural proofs which is sufficient to prove the parity lower bounds of Furst, Saxe, and Sipser, Yao, and Håstad is inherently incapable of proving the bounds of Razborov and Smolensky. We give some formal evidence that natural proofs are indeed natural by showing that every formal complexity measure, which can prove superpolynomial lower bounds for a single function, can do so for almost all functions, which is one of the two requirements of a natural proof in our sense.}
+}
+
+@article{Kabanets01,
+title = {Easiness Assumptions and Hardness Tests: Trading Time for Zero Error},
+journal = {Journal of Computer and System Sciences},
+volume = {63},
+number = {2},
+pages = {236-252},
+year = {2001},
+issn = {0022-0000},
+doi = {https://doi.org/10.1006/jcss.2001.1763},
+url = {https://www.sciencedirect.com/science/article/pii/S0022000001917635},
+author = {Valentine Kabanets},
+abstract = {We propose a new approach toward derandomization in the uniform setting, where it is computationally hard to find possible mistakes in the simulation of a given probabilistic algorithm. The approach consists in combining both easiness and hardness complexity assumptions: if a derandomization method based on an easiness assumption fails, then we obtain a certain hardness test that can be used to remove error in BPP algorithms. As an application, we prove that every RP algorithm can be simulated by a zero-error probabilistic algorithm, running in expected subexponential time, that appears correct infinitely often (i.o.) to every efficient adversary. A similar result by Impagliazzo and Wigderson (FOCS'98) states that BPP allows deterministic subexponential-time simulations that appear correct with respect to any efficiently sampleable distribution i.o., under the assumption that EXP≠BPP; in contrast, our result does not rely on any unproven assumptions. As another application of our techniques, we get the following gap theorem for ZPP: either every RP algorithm can be simulated by a deterministic subexponential-time algorithm that appears correct i.o. to every efficient adversary or EXP=ZPP. In particular, this implies that if ZPP is somewhat easy, e.g., ZPP⊆DTIME(2nc) for some fixed constant c, then RP is subexponentially easy in the uniform setting described above.}
+}
+
+@article{Mulmuley10,
+  title={Explicit Proofs and The Flip},
+  author={Ketan Mulmuley},
+  journal={ArXiv},
+  year={2010},
+  volume={abs/1009.0246},
+  url={https://api.semanticscholar.org/CorpusID:18834159}
+}
+
+@article{Turing36,
+  title={On computable numbers, with an application to the Entscheidungsproblem},
+  author={Turing, Alan Mathison},
+  journal={J. of Math},
+  volume={58},
+  number={345-363},
+  pages={5},
+  year={1936}
+}
+
 
 
   

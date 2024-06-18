@@ -1,5 +1,3 @@
-\todowrite{Write Chapter 2}
-
 This chapter is a more technical introduction to the rest of this work. 
 We lay out the definitions of fundamental concepts that we will be using
 and state the theorems proven in \cite{ConstructiveSeparations} that 
@@ -49,7 +47,7 @@ automata and languages.
 A one-tape Turing machine over an input alphabet $\Sigma$ is a tuple $(Q, \Gamma, \blank, 
 \delta, q_0, q_A, q_R)$, where $Q$ is the set of states, $\Gamma \supset \Sigma$ is the tape alphabet,
 $\blank \in \Gamma \setminus \Sigma$ is the blank symbol, 
-$delta \colon Q \times \Gamma \to Q \times \Gamma \times \{L, R\}$ is the transition function, and
+$\delta \colon Q \times \Gamma \to Q \times \Gamma \times \{L, R\}$ is the transition function, and
 $q_0, q_A, q_R \in Q$ are the initial, accepting and rejecting states. The Turing machine 
 has an infinite bidirectional tape subdivided into cells which we will index by integers, 
 and a moving head which can read and write on one cell at a time. 
@@ -125,7 +123,7 @@ Another concept we will use for randomized algorithms is the \emph{probability g
 \begin{definition}
 A randomized decisional algorithm $\A(x, r)$ has \emph{probability gap} $\delta$ if there exists a function
 $\determine{\A} \colon \{0, 1\}^* \to \{0, 1\}$ such that, for all $x$, 
-$\Probsub{r}{\A(x, r) = \determine{A}(x)} \geq \frac{1 + \delta}{2}$. 
+$\Probsub{r}{\A(x, r) = \determine{\A}(x)} \geq \frac{1 + \delta}{2}$. 
 The function $\determine{\A}$ is the \emph{determination} of $\A$.
 
 We say that a randomized algorithm $\A(x, r)$ has bounded probability gap if it has probability gap $\delta$
@@ -277,9 +275,9 @@ For a function $\eps(n)$ of $n$, consider the following basic problem $\MAJ_{n, 
 
 It is proven in \cite{Canetti95} that query algorithms solving this problem must make $\Omega(1/\eps^2)$ 
 queries; in \cite{ConstructiveSeparations} they show that making the lower bound sufficiently constructive
-implies $\P \neq \NP$! Here, ``sufficiently constructive'' means that the refuter needs to be 
+implies $\PTIME \neq \NP$! Here, ``sufficiently constructive'' means that the refuter needs to be 
 polylogtime-uniform-$\AC^0$ (though, as we will see, polylogtime-uniform-$\qAC^0$ refuters suffice), but
-it is still possible to get $\P \neq \PSPACE$ using the less restrictive polylogtime-uniform-$\NC^1$ circuits.
+it is still possible to get $\PTIME \neq \PSPACE$ using the less restrictive polylogtime-uniform-$\NC^1$ circuits.
 
 \begin{restatable}[Theorem 1.6 from \cite{ConstructiveSeparations}]{theorem}{thmcsrefuterqa}\label{thm:csrefuterqa} 
 	Let $\eps$ be a function of $n$ satisfying $\eps \leq 1/(\log n)^{\omega(1)}$, and $1/\eps$ is a positive integer
@@ -386,7 +384,7 @@ bits to the binary representation of $n$.
 	We have that $f_R \in \PH$, since the evaluation of the circuit consists 
 	of a finite alternation of existential and universal statements (corresponding to the 
 	OR and AND gates of the circuit) which can be verified using the polynomial-time
-	algorithm $B$. Since $\P = \NP$, $f_R$ is computable in $\P$, which means that it has 
+	algorithm $B$. Since $\PTIME = \NP$, $f_R$ is computable in $\P$, which means that it has 
 	polynomial-size circuits. We conclude as in the previous lemma. 
 
 	The same argument applies to the second item replacing $\qAC^0$ by $\qNC^1$ and $\PH$ by $\PSPACE$. 

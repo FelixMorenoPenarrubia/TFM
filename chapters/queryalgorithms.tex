@@ -1,5 +1,3 @@
-\todowritehp{Finish writing Chapter 3}
-
 In this chapter, we study constructive separations in the query algorithm setting.
 In particular, we study the problem $\MAJ$ of distinguishing determining whether
 a binary string $x \in \{0, 1\}^n$ has at least $(\frac{1}{2}+\eps)n$ ones or
@@ -67,8 +65,6 @@ is the string of $n$ bits sampled by the distribution),
 denote by $\calD^+$ the probability distribution conditioned on $x \in X^+_\eps$,
 and by $\calD^-$ the probability distribution conditioned on $x \in X^-_\eps$.
 
-\todowrite{define w1, etc in introduction}
-
 \begin{lemma}
 \label{lem:symproperties}
 Let $\calD$ be a distribution on $\{0, 1\}^n$ which has homogeneous symmetry.
@@ -78,7 +74,6 @@ Let $\calD$ be a distribution on $\{0, 1\}^n$ which has homogeneous symmetry.
     of $y$: $F_{\calD}(y) = F_{\D}(0^{w_0(y)}1^{w_1(y)})$. We will denote by $f_\D(a, b)$ the value of $F_{\D}(0^a 1^b)$.
     \item If the events $x \in X^+_\eps$ and $x \in X^-_\eps$ have nonzero probability
     (i.e. $\D^+$ and $\D^-$ are well-defined),
-    \todopolish{Find a way to phrase this without the awkward variable $x$?}
     the distributions $\D^+$ and $\D^-$ have homogeneous symmetry. 
     \item If $\D^+$ and $\D^-$ are well-defined and $a \leq b$, then $f_{\D^+}(b, a) \leq f_{\D^+}(a, b)$.
     \item If $\D$ has complementary symmetry and $\D^+$ and $\D^-$ are well-defined, then  
@@ -242,8 +237,8 @@ Adding them and applying \cref{lem:symproperties}, we get the desired result:
 
 \begin{theorem}
 \label{thm:querylb}
-\todo{conditions on eps}
-Let $\A$ be a query algorithm that solves the $\MAJ$ problem on inputs uniformly drawn from 
+Let $\eps(n)$ be a function of $n$ with $\eps(n) = o(1)$, and
+let $\A$ be a query algorithm that solves the $\MAJ$ problem on inputs uniformly drawn from 
 $S_n = \{x \in \{0, 1\}^n | w_1(x) \in \{\lfloor(1/2-\eps)n\rfloor, \lceil(1/2+\eps)n\rceil\}\}$ 
 with failure probability $\delta(n)$ using always at most $t(n)$ queries, with $t(n) \leq \frac{1}{4}\sqrt{n}$. 
 There exists an absolute constant $C$ so that: 
@@ -422,8 +417,6 @@ relevant for studying the best possible refuters in this setting:
     $k$-juntas (not general randomized query algorithms).
 \end{itemize}
 
-\todo{Review this after definitions of refuters}
-
 \begin{theorem}
     Let $\eps$ be a function of $n$ satisfying $\eps \leq 1/(\log n)^{\omega(1)}$, and $1/\eps$ is a positive integer
     computable in $\poly(1/\eps)$ time given $n$ in binary. Let $\delta > 0$, and let $t = 1/\eps^{1+\delta}$.
@@ -554,10 +547,8 @@ It is clear that $k$-juntas can not distinguish between $k$-wise independent Ber
 and $n$ independent Bernoulli random variables with the same probability. Interestingly, 
 these distributions also fool any query algorithm using $k$ queries. 
 
-\todowrite{Definitions of query algorithms in introduction}
-
 \begin{theorem}
-Let $\A$ be a query algorithm using at most $k$ queries on $\{0, 1\}^n$, 
+Let $\A$ be a query algorithm using $k$ queries on $\{0, 1\}^n$, 
 let $\D$ be the distribution of $n$ independent 
 Bernoulli variables with probability $p$ on $\{0, 1\}^n$, and let
 $\D'$ be a $k$-wise independent probability $p$ Bernoulli distribution on $\{0, 1\}^n$. Then:
@@ -628,7 +619,6 @@ but with a different probability distribution and with some additional complicat
 \begin{theorem}
     \label{thm:refutergreatereps}
 Let $\eps = \eps(n) = 1/(\log n)^{O(1)}$ and let $\delta > 0$ be a sufficiently small constant.
-\todopolish{Clarify value of delta like in previous results}
 There exists a quasipolynomial-time quasipolynomial-list-refuter
 $R$ for $\MAJ_{n,\eps}$ against all query algorithms using $t(n) = o(1/\eps^2)$ queries with probability gap bounded by $1-2\delta$.
 \end{theorem}
@@ -663,8 +653,6 @@ inputs from $\D_4$. Therefore, they must also fail at a constant fraction of inp
 and in particular they will fail for at least one of the elements outputted by $R(1^n)$, for $n$ big enough.
 
 \end{proofsketch}
-
-\todowrite{Write conclusion relating it to observations of the previous section.}
 
 \subsection{Limits of Explicit Obstructions}
 
@@ -720,7 +708,7 @@ case where $x$ has majority $0$ is symmetric).
 It is clear that if $\A$ exits the loop because $L^-$ has become empty, then it always gives the correct answer.
 Then, $\A$ can only give a wrong answer when it outputs $0$ after sampling $\log (6 \log |L|)/\eps$ points in $S_0$
 and finding that they are all equal to $0$. 
-Note that, if $|S_0| \geq 1/2$, then $x[S_0]$ must have
+Note that, if $|S_0| \geq n/2$, then $x[S_0]$ must have
 at least $\eps n$ bits equal to $1$, and therefore the probability of sampling a bit equal to $1$ is at least $\eps$.
 Therefore, the probability that all sampled bits are equal to $0$ is at most 
 $(1-\eps)^{\log (6 \log |L|)/\eps} \leq \frac{1}{6 \log |L|}$. 

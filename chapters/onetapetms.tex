@@ -782,7 +782,7 @@ Note that by taking $f(n) = (\log n)^k$, the $\DTIME$-class bound we get is simi
 by the classic diagonalization used to show $\Sigma^{\PTIME}_4 \not\subset \SIZE(n^k)$ \cite{Kannan82}. This refuter
 is too weak to give new circuit lower bounds, but on in some sense it seems to be ``close''. For example, if we could 
 refute $O(n \polylog(n))$ 1-NTMs still using polynomial time, then we would prove $\E^\NP \not\subset \SIZE(n^k)$, 
-which is not known. We now have a refuter against all $O(n^{1+o(1)})$ 1-TMs using subexponential ($2^{n^o(1)}$) time;
+which is not known. We now have a refuter against all $O(n^{1+o(1)})$ 1-TMs using subexponential ($2^{n^{o(1)}}$) time;
 if we could refute $O(n^{1+\eps})$ in that time, we would get $\DTIME[2^{2^{o(n)}}] \not\subset \SIZE[2^{\delta n}]$.   
 
 Therefore, it seems difficult to improve this refuter. However, there is some evidence that it does admit improvements.

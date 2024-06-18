@@ -1,7 +1,7 @@
 \Input $n$
 \Program
 \State $L \gets R(1^n)$
-\State $(L^+, L^-) \gets \Call{Filter}{L}$ \Comment{$L^+$ are the elements of $L$ with $\geq (1/2+\eps)$ ones, $L^-$ the ones with $\leq (1/2-\eps)n$ ones}
+\State $(L^+, L^-) \gets \Call{Filter}{L}$ \Comment{$L^+$ are the elements of $L$ with $\geq (1/2+\eps)$ ones, $L^-$ the elements with $\leq (1/2-\eps)n$ ones}
 \While{$L^+ \neq \emptyset$ and $L^- \neq \emptyset$}
     \State $m^+ \gets \Call{Majority}{L^+}$
     \State $m^- \gets \Call{Majority}{L^-}$

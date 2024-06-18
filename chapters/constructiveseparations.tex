@@ -8,7 +8,7 @@ motivate this work.
 We presuppose a certain level of familiarity with computational complexity theory. However, 
 for convenience in this section we will define some of the basic important concepts 
 that we will use, as well as explain some of the notational choices we have made
-in this work. We will not be overtly formal and detailed with the more common definitions.
+in this work. We will not be overly formal and detailed with the more common definitions.
 Anything not defined here can be found in standard references for the subject, 
 such as \cite{AB09}.
 
@@ -21,7 +21,7 @@ decisional problems with languages over $\{0, 1\}$, with the encodings of the po
 problem belonging to the language. 
 
 We sometimes identify a single character $x \in \Sigma$ with the word in $\Sigma^*$ consisting of that
-single characters. Given two words $w_1, w_2 \in \Sigma^*$, we denote by $w_1 \concat w_2$ their 
+single character. Given two words $w_1, w_2 \in \Sigma^*$, we denote by $w_1 \concat w_2$ their 
 concatenation. Sometimes we will omit the symbol and just write $w_1w_2$. We denote by exponentiation
 $w^n$ the repeated concatenation of $w$ $n$ times. For example, $1^n$ denotes a string of $n$ ones.
 We denote by $w^R$ the reverse of the word $w$. We denote by $w_i$ the $i$-th character of $w$ 
@@ -29,8 +29,10 @@ We denote by $w^R$ the reverse of the word $w$. We denote by $w_i$ the $i$-th ch
 We denote by $w[i \ldots j]$ the subword of 
 $w$ from the $i$-th character to the $j$-th character inclusive, and denote by 
 $w(i \ldots j]$, $w[i \ldots j)$, $w(i \ldots j)$ the corresponding subwords with one or both of the
-ends excluded. If $S \subseteq [n]$, we denote by $w[S]$ the subsequence of $w$ with indices in $S$. 
-We denote by $|w|$ the length of a word $w$. Given a nonnegative integer $n$, we let 
+ends excluded.  
+We denote by $|w|$ the length of a word $w$. We denote by $[n]$ the set $\{1, \ldots, n\}$.
+If $S \subseteq [|w|]$, we denote by $w[S]$ the subsequence of $w$ with indices in $S$.
+Given a nonnegative integer $n$, we let 
 $\bitlength n = \lfloor \log_2 n \rfloor + 1$ be the length of its binary representation.  
 
 A determinitic finite automaton (DFA) over an alphabet $\Sigma$ is a tuple $M = (Q, q_0, \delta, S)$, 
@@ -229,7 +231,7 @@ the function $\ell(n)$ is polynomial or quasipolynomial, respectively.
 
 Another possible variant concerns the dependency of the refuter with the algorithm. 
 Note that in \cref{def:constructiveseparation}, the refuter is allowed to 
-depend non-uniformly in the algorithm. In \cref{Gutfreund05}, the refuter is an uniform
+depend non-uniformly in the algorithm. In \cite{Gutfreund05}, the refuter is an uniform
 algorithm which is given the source code and the running time of the algorithm being refuted. 
 Atserias \cite{Atserias06} constructed a $\BPP$-refuter against polynomial-size circuits 
 computing SAT which is \emph{almost} black-box: it only needs oracle access to the circuits
@@ -241,10 +243,10 @@ or also \emph{oblivious list-refuters}.
 \begin{definition}
 	For a function $f \colon \{0, 1\}^* \to \{0, 1\}$, a class of algorithms $\mathcal{C}$,
 	and a function $\ell(n) \colon \mathbb{N} \to \mathbb{N}$ 
-	a $\ell(n)$-length $\PTIME$ explicit obstructions refuter for $f$ against $\mathcal{C}$ is a deterministic polynomial time
+	a $\ell(n)$-length explicit obstructions $\PTIME$-refuter for $f$ against $\mathcal{C}$ is a deterministic polynomial time
 	algorithm $R$ that, given input $1^n$, prints a list of length $n$ strings
 	$x^{(1)}, \ldots, x^{(\ell(n))} \in \{0, 1\}^n$,
-	such that for all $\A in \mathcal{C}$, for infinitely many $n$, there exists an $i \in [\ell(n)]$ so that 
+	such that for all $\A \in \mathcal{C}$, for infinitely many $n$, there exists an $i \in [\ell(n)]$ so that 
 	$\A(x^{(i)}) \neq f(x^{(i)})$.
 \end{definition}
 
@@ -270,7 +272,7 @@ For a function $\eps(n)$ of $n$, consider the following basic problem $\MAJ_{n, 
 by $\textrm{PromiseMAJORITY}_{n, \eps}$ in \cite{ConstructiveSeparations}):
 
 \begin{itemize}
-	\item[] $\MAJ_{n, \eps}$ given an input $x \in \{0, 1\}^n$, determine whether $w_1(x) \geq (1/2+\eps)n$
+	\item[] $\MAJ_{n, \eps}$: given an input $x \in \{0, 1\}^n$, determine whether $w_1(x) \geq (1/2+\eps)n$
 	or $w_1(x) \leq (1/2-\eps)n$, given that it is one of the two cases. 
 \end{itemize}
 
@@ -385,7 +387,7 @@ bits to the binary representation of $n$.
 	We have that $f_R \in \PH$, since the evaluation of the circuit consists 
 	of a finite alternation of existential and universal statements (corresponding to the 
 	OR and AND gates of the circuit) which can be verified using the polynomial-time
-	algorithm $B$. Since $\PTIME = \NP$, $f_R$ is computable in $\P$, which means that it has 
+	algorithm $B$. Since $\PTIME = \NP$, $f_R$ is computable in $\PTIME$, which means that it has 
 	polynomial-size circuits. We conclude as in the previous lemma. 
 
 	The same argument applies to the second item replacing $\qAC^0$ by $\qNC^1$ and $\PH$ by $\PSPACE$. 

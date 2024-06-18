@@ -402,7 +402,7 @@ using $o(\eps^{-2})$ queries and running in $\poly(n)$ time.
         \sum_{i=1}^{\infty} \Probsub{x,r}{\determine{\A}(x) \neq L(x) \wedge \A^*(x, r) = \determine{\A}(x)} \left(\Probsub{x,r}{\determine{\A}(x) = L(x) \wedge \A^*(x, r) = \determine{\A}(x)}  \right)^{i-1}
     \end{equation}
 
-    Denote by $p = \Prob {\determine{\A}(x) \neq L(x)}$. Note that:
+    Let $p = \Probsub{x}{\determine{\A}(x) \neq L(x)}$. Note that:
     \begin{align*}
          & \Probsub{x,r}{\determine{\A}(x) \neq L(x) \wedge \A^*(x, r) = \determine{\A}(x)} \\
          & = \sum_{y\in S_n} \Probsub{x, r}{\determine{\A}(x) \neq L(x) \wedge \A^*(x, r) = \determine{\A}(x) | x = y} \Probsub{x}{x = y} \\
@@ -457,11 +457,11 @@ relevant for studying the best possible refuters in this setting:
     Let $\eps$ be a function of $n$ satisfying $\eps \leq 1/(\log n)^{\omega(1)}$, and $1/\eps$ is a positive integer
     computable in $\poly(1/\eps)$ time given $n$ in binary. Let $\delta > 0$, and let $t = 1/\eps^{1+\delta}$.
 	\begin{itemize}
-		\item If for every uniform distribution of $t$-juntas running in $\poly(1/\eps)$ time there exist
+		\item If for every uniform distribution of $t$-juntas running in $\poly(1/\eps)$ time there exists
         a polylogtime-uniform-$\qAC^0$ quasipolynomial-length list-refuter $R$ of $\MAJ_{n, \eps}$ against 
         $\A$, then $\NP \neq \PTIME$. 
-		\item If for every uniform distribution of $t$-juntas running in $\poly(1/\eps)$ time there exist
-        a polylogtime-uniform-$\qNC^1$-uniform quasipolynomial-length list-refuter $R$ of $\MAJ_{n, \eps}$ against 
+		\item If for every uniform distribution of $t$-juntas running in $\poly(1/\eps)$ time there exists
+        a polylogtime-uniform-$\qNC^1$ quasipolynomial-length list-refuter $R$ of $\MAJ_{n, \eps}$ against 
         $\A$, then $\PSPACE \neq \PTIME$. 
 	\end{itemize}
 \end{theorem}
@@ -496,7 +496,7 @@ relevant for studying the best possible refuters in this setting:
     string is the same as the answer of $\MAJ_{n, \eps/2}$ on the output of $D$.
     
     In total, our algorithm has success probability $2/3$, time complexity $\poly(1/\eps)$, and 
-    sample complexity $O(1/\eps^{1+\delta})$. 
+    query complexity $O(1/\eps^{1+\delta})$. 
 \end{proof}
 
 \section{Constructive Separations Against Weaker Query Algorithms}
@@ -708,9 +708,9 @@ which correctly solves $\MAJ_{n, \eps}$ with probability at least $2/3$ on each 
 \end{theorem}
 \begin{proof}
 
-The algorithm $\A$ is described in \cref{alg:explicitlimits}. First, $\A$ computes $L$ and divides it into
-$L^+$ and $L^-$, depending on whether the majority is $1$ or $0$. $L^+$ and $L^-$ will mantain at all times the elements
-of the list that are consistent with the information obtained by the queries. If at any point
+The algorithm $\A$ is described in \cref{alg:explicitlimits}. First, $\A$ computes the list $L$ and divides it into
+sublists $L^+$ and $L^-$, corresponding to inputs for which the majority is $1$ or $0$, respectively. $L^+$ and $L^-$ will mantain at all times the elements
+of the list that are consistent with the information obtained by the queries so far. If at any point
 $L^+$ or $L^-$ becomes empty, the answer is determined and the algorithm can output it and stop. 
 
 \begin{algorithm}
@@ -764,7 +764,7 @@ is at most $2 \log |L| \cdot \frac{1}{6 \log |L|} = \frac{1}{3}$, as desired.
 the statement must necessarily have refuters that depend on the algorithm being refuted. 
 Note that if $\eps = 1/(\log n)^{\omega(1)}$ and $|L|$ is quasipolynomial, then $O((\log |L| \log \log |L|)/\eps) = o(1/\eps^{1+\delta})$ for all 
 $\delta > 0$. 
-This suggests that that refuters that would achieve the breakthroughs of \cref{thm:csrefuterqa},
+This suggests that refuters that would achieve the breakthroughs of \cref{thm:csrefuterqa},
 if they exist, should depend on the algorithm being refuted.
 However, there are some details that could potentially make this not be the case: recall that
 in \cref{thm:csrefuterqa} we only require refuters against uniform distributions of $k$-juntas

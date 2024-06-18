@@ -45,8 +45,8 @@ and the existence of cryptographic primitives. One possible world, \emph{Algorit
 is the world where $\PTIME = \NP$ and therefore all $\NP$ problems are easy in the worst case.
 Another possible world, \emph{Heuristica}, is the world where $\PTIME \neq \NP$ but all
 $\NP$ problems are easy in the average case, that is, for every efficiently samplable input
-distribution there exists a polynomial-time algorithm which solves the problem on inputs from
-that distribution.
+distribution there exists a polynomial-time algorithm which solves the problem with high probability
+on inputs sampled from that distribution.
 One could imagine an intermediate world, \emph{Super-Heuristica}, where the quantifiers are reversed
 and we have one algorithm which works for all samplable distributions, despite having $\PTIME \neq \NP$. 
 The results of \cite{Gutfreund05} imply that this world can not exist.
@@ -96,7 +96,7 @@ positions of the string $x$. It is also known, at least since \cite{Canetti95}, 
 random sampling is the best one can do under very general conditions. That is, there is no
 algorithm that reliably distinguishes between the two cases using only $o(1/\eps^2)$ queries
 to the string. In \cite{ConstructiveSeparations} it is shown that making this lower bound
-constructive would imply $\PTIME \neq \NP$! We discuss this refuters for this
+constructive would imply $\PTIME \neq \NP$! We discuss refuters for this
 problem in the chapter, showing a 
 randomized refuter, reproducing the proof of \cite{ConstructiveSeparations} and discussing
 possible variations and strengthenings, and providing deterministic refuters for weaker algorithms. 
@@ -106,7 +106,7 @@ The original machine model defined by Turing \cite{Turing36} had only one tape,
 but in modern computational complexity the model of computation is usually taken
 to be \emph{multi-tape} Turing machines, since one-tape TMs have some 
 unrealistic limitations.
-For example, they require $\Omega(n^2)$ time to regonize palindromes \cite{Hennie65}. 
+For example, they require $\Omega(n^2)$ time to recognize palindromes \cite{Hennie65}. 
 In \cite{ConstructiveSeparations}, it is shown that making this lower bound constructive
 would imply breakthrough circuit lower bounds. In the chapter, we discuss refuters
 for the problem of palindromes, showing a randomized refuter, reproducing the proof of 

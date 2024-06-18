@@ -1,5 +1,5 @@
 In this chapter, we study constructive separations in the query algorithm setting.
-In particular, we study the problem $\MAJ$ of distinguishing determining whether
+In particular, we study the problem $\MAJ$ of determining whether
 a binary string $x \in \{0, 1\}^n$ has at least $(\frac{1}{2}+\eps)n$ ones or
 at most $(\frac{1}{2}-\eps)n$ ones, under the promise that it is one of the two
 cases. 
@@ -8,7 +8,7 @@ We will prove the $\Omega(1/\eps^2)$ lower bound in the number of queries
 for $\MAJ$, show a randomized constructive separation against algorithms
 using fewer queries, and prove and discuss \cref{thm:csrefuterqa}, the result
 from \cite{ConstructiveSeparations} showing that breakthrough lower
-bounds follow from sufficiently constructive separations of $\MAJ$.  
+bounds follow from sufficiently constructive separations for the problem.  
 
 
 \section{Lower Bounds Against Query Algorithms for $\MAJ$}
@@ -16,9 +16,9 @@ bounds follow from sufficiently constructive separations of $\MAJ$.
 
 The obvious algorithm for $\MAJ$ consists in randomly sampling values and answering 
 according to the majority of the values we have obtained. According to well-studied
-bounds on the binomial distribution, $\Theta(1/\eps^2)$ samples
+bounds on the binomial distribution, for this strategy $\Theta(1/\eps^2)$ samples
 are necessary and sufficient to make the probability of error smaller than any 
-fixed constant following this strategy.
+fixed constant.
 
 In this section, we will prove the very intuitive result that this is essentially
 the best that can be done, that is, that there is no query algorithm making $o(1/\eps^2)$
@@ -28,8 +28,8 @@ that compute the average of a real-valued function $f \colon \{0, 1\}^n \to [0, 
 by sampling some of the inputs. 
 
 The result that we will prove here is stronger than the one stated in \cite{Canetti95}:
-we will prove not just that such query algorithms require $\Omega(1/\eps^2)$ in the 
-worst case in order to have a high success probability \emph{for all} inputs; instead,
+we will prove not just that such query algorithms require $\Omega(1/\eps^2)$ queries
+in order to have a high success probability \emph{for all} inputs; instead,
 we will prove that $\Omega(1/\eps^2)$ queries are required for \emph{random} inputs,
 where the probability of success is over the randomness of both the input and the algorithm.
 This will allow us to obtain a constructive separation.
@@ -46,11 +46,11 @@ symmetry} if for every $y \in \{0, 1\}^*$ and every pair of subsets $S, S' \subs
 with $|S| = |S'| = |y|$, 
 $\Probsub{x \samplefrom \calD}{x[S] = y} = \Probsub{x \samplefrom \calD}{x[S'] = y}$.
 That is, the probability $\Probsub{x \samplefrom \calD}{x[S] = y}$ does not depend
-on the set $S$. Denote by $F_{\calD}(y)$ the probability
+on the set $S$ for sets $S$ with $|S| = |y|$. Denote by $F_{\calD}(y)$ the probability
 $\Probsub{x \samplefrom \D}{x[S] = y}$ for any $S$ with $|S| = |y|$.
 
 A probability distribution $\calD$ on $\{0, 1\}^n$ has \emph{complementary symmetry} if for every
-$y in \{0, 1\}^n$, $\Probsub{x \samplefrom \D}{x = y} = \Probsub{x \samplefrom \D}{x = \complementary{y}}$,
+$y \in \{0, 1\}^n$, $\Probsub{x \samplefrom \D}{x = y} = \Probsub{x \samplefrom \D}{x = \complementary{y}}$,
 where $\complementary{y}$ is the complementary vector of $y$.
 
 A probability distribution $\D$ on $\{0, 1\}^n$ is \emph{symmetric} if it has homogeneous symmetry
@@ -64,6 +64,7 @@ the events $x \in X^+_\eps$ and $x \in X^-_\eps$ have nonzero probability (where
 is the string of $n$ bits sampled by the distribution), 
 denote by $\calD^+$ the probability distribution conditioned on $x \in X^+_\eps$,
 and by $\calD^-$ the probability distribution conditioned on $x \in X^-_\eps$.
+We denote by $f_\D(a, b)$ the value of $F_{\D}(0^a 1^b)$.
 
 \begin{lemma}
 \label{lem:symproperties}
@@ -71,11 +72,12 @@ Let $\calD$ be a distribution on $\{0, 1\}^n$ which has homogeneous symmetry.
 
 \begin{enumerate}
     \item The probability $F_{\calD}(y)$ only depends on the number of zeros and ones
-    of $y$: $F_{\calD}(y) = F_{\D}(0^{w_0(y)}1^{w_1(y)})$. We will denote by $f_\D(a, b)$ the value of $F_{\D}(0^a 1^b)$.
+    of $y$: $F_{\calD}(y) = F_{\D}(0^{w_0(y)}1^{w_1(y)}) = f_\D(w_0(y), w_1(y))$. 
     \item If the events $x \in X^+_\eps$ and $x \in X^-_\eps$ have nonzero probability
     (i.e. $\D^+$ and $\D^-$ are well-defined),
     the distributions $\D^+$ and $\D^-$ have homogeneous symmetry. 
-    \item If $\D^+$ and $\D^-$ are well-defined and $a \leq b$, then $f_{\D^+}(b, a) \leq f_{\D^+}(a, b)$.
+    \item If $\D^+$ and $\D^-$ are well-defined and $a \leq b$, then $f_{\D^+}(b, a) \leq f_{\D^+}(a, b)$
+    and $f_{\D^-}(a, b) \leq f_{\D^-}(b, a)$.
     \item If $\D$ has complementary symmetry and $\D^+$ and $\D^-$ are well-defined, then  
     $f_{\D^+}(a, b) = f_{\D^-}(b, a)$ for all
     $a, b \geq 0$.
@@ -108,10 +110,10 @@ Let $\calD$ be a distribution on $\{0, 1\}^n$ which has homogeneous symmetry.
 Second item:
 \begin{align*}
     \Probsub{x \samplefrom \D^+}{x[S] = y} & = \Probsub{x \samplefrom \D}{x[S] = y | x \in X^+_\eps} \\
-        & = \sum_{\substack{z\in X^+_\eps \\ z[S] = y}} \Probsub{x \samplefrom \D}{x = z} \\
-        & = \sum_{\substack{z\in X^+_\eps \\ z[S] = y}} F_{\D}(0^{w_0(z)}1^{w_1(z)})
+        & = \frac{1}{\Probsub{x \samplefrom \D}{x \in X^+_\eps}} \sum_{\substack{z\in X^+_\eps \\ z[S] = y}} \Probsub{x \samplefrom \D}{x = z} \\
+        & = \frac{1}{\Probsub{x \samplefrom \D}{x \in X^+_\eps}} \sum_{\substack{z\in X^+_\eps \\ z[S] = y}} F_{\D}(0^{w_0(z)}1^{w_1(z)})
         && (\text{first item on set } S = [n])\\
-        & = \sum_{\substack{z\in X^+_\eps \\ z[S'] = y}} F_{\D}(0^{w_0(z)} 1^{w_1(z)}) \\
+        & = \frac{1}{\Probsub{x \samplefrom \D}{x \in X^+_\eps}} \sum_{\substack{z\in X^+_\eps \\ z[S'] = y}} F_{\D}(0^{w_0(z)} 1^{w_1(z)}) \\
         & = \Probsub{x \samplefrom \D^+}{x[S'] = y}.
 \end{align*}
 
@@ -135,7 +137,8 @@ Third item:
         & = f_{\D^+}(a,b),
     \end{align*}
     where the inequality at $(*)$ uses that if $x \leq y$ and $a \leq b$, then 
-    $\binom{x}{a} \binom{y}{b} \geq \binom{x}{b} \binom{y}{a}$.
+    $\binom{x}{a} \binom{y}{b} \geq \binom{x}{b} \binom{y}{a}$. The proof of $f_{\D^-}(a, b) \leq f_{\D^-}(b, a)$ 
+    is analogous.
 
 Fourth item:
 \begin{align*}
@@ -172,18 +175,17 @@ Fourth item:
 \label{lem:symmetricbound}
 Let $\calD$ be a symmetric distribution supported on $X^+_\eps \cup X^-_\eps$,
  and let $\A$ be a probabilistic query algorithm
-that always does $t$ queries and solves $\MAJ$ with error probability $\delta$ 
+that always does $t$ queries and solves $\MAJ_{n, \eps}$ with error probability $\delta$ 
 on inputs sampled from $\calD$. 
 Then:
 $$
-\sum_{i=0}^{\lceil t/2 \rceil-1} \binom{t}{i} f_{\D^+}(i, t-i) \leq \delta.
+\sum_{i=0}^{\lceil t/2 \rceil-1} \binom{t}{i} f_{\D^+}(t-i, i) \leq \delta.
 $$
 \end{lemma}
 \begin{proof}
 Denote by $x$ the input, and let $Y = y_1 \ldots y_t$ denote the random variable corresponding
 to the values of the $t$ sampled points. Note that $Y$ depends on $x$ and also on the randomness
-over the execution of $Y_r$ be the random variable corresponding to the sampled points where
-the randomness of $\A$ has been fixed to be $r$. $Y_r$ only depends on the choice of $x$.
+over the execution of $\A$. 
 
 Let $P^+ = \Prob{\A(x) = 0 | x \in X^+_\eps}$ the probability that the algorithm errs
 conditioned on $x$ having a majority of ones, and similarly let 
@@ -200,7 +202,7 @@ Now note the following:
 
 \begin{itemize}
     \item Once $y$ is fixed, the result of $\A$ does not depend on $x$, but only on $y$ and $r$.
-    Hence $\Probsub{x,r}{A(x) = 0 | Y = y, x \in X^+_\eps} = \Probsub{r}{\A(x) = 0 | Y = y}$.
+    Hence $\Prob{A(x) = 0 | Y = y, x \in X^+_\eps} = \Prob{\A(x) = 0 | Y = y} = \Prob{\A(x) = 0 | Y = y, x \in X^-_\eps}$.
     We denote this probability by $G_\A(y)$.
     \item Since $\D$ is symmetric, the event $Y = y$ does not depend on the
     randomness $r$ of the algorithm and in fact $\Prob{Y = y | x \in X^+_\eps} = F_{\D^+}(y)$.
@@ -224,16 +226,19 @@ $$
 
 Adding them and applying \cref{lem:symproperties}, we get the desired result:
 \begin{align*}
-\delta & \geq \frac{1}{2}\left(P^+ + P^-\right) \\
+\delta & \geq \frac{1}{2}\left(P^+ + P^-\right) && (\text{compl. sym.}) \\
         & = \frac{1}{2}\sum_{y \in \{0, 1\}^t} F_{\D^+}(y) \cdot G_\A(y) + F_{\D^-}(y) \cdot (1-G_\A(y)) \\ 
         & \geq \frac{1}{2}\sum_{y \in \{0, 1\}^t} \min \{F_{\D^+}(y), F_{\D^-}(y)\} \\
         & = \frac{1}{2}\sum_{i=0}^{t} \binom{t}{i} \min \{f_{\D^+}(i, t-i), f_{\D^+}(t-i, i)\} 
         && (\text{\cref{lem:symproperties} (4)})\\
-        & \geq \sum_{i=0}^{\lceil t/2 \rceil-1} \binom{t}{i} f_{\D^+}(i, t-i).
+        & \geq \sum_{i=0}^{\lceil t/2 \rceil-1} \binom{t}{i} f_{\D^+}(t-i, i).
         && (\text{\cref{lem:symproperties} (3)})
 \end{align*}
 
 \end{proof}
+
+In the previous results, we considered $n$ and $\eps$ to be fixed. Now 
+we prove a result for algorithms which work for all $n$:
 
 \begin{theorem}
 \label{thm:querylb}
@@ -245,21 +250,20 @@ There exists an absolute constant $C$ so that:
 $$
 t(n) \geq \frac{1}{4\eps^2} \log \left(\frac{C}{\delta}\right)
 $$
-
 for all sufficiently large $n$.
 \end{theorem}
 
 \begin{proof}
 
 First, we can assume that the algorithm always samples exactly $t(n)$ distinct points. Otherwise,
-we can create an algorithm $A'$ which samples additional points before answerting
+we can create an algorithm $A'$ which samples additional points before answering
 until exactly $t(n)$ points have been sampled.
 
 For each $n$, the uniform distribution $U_{S_n}$ on $S_n$ is a symmetric distribution. 
 Therefore, by \cref{lem:symmetricbound}, we have:
 
 $$
-\sum_{i=0}^{\lceil t/2 \rceil-1} \binom{t}{i} f_{U^+_{S_n}}(i, t-i) \leq \delta(n).
+\sum_{i=0}^{\lceil t/2 \rceil-1} \binom{t}{i} f_{U^+_{S_n}}(t-i, i) \leq \delta(n).
 $$
 
 Let $k = \lceil(1/2+\eps)n\rceil$. We can compute $f_{U^+_{S_n}}$:
@@ -267,11 +271,11 @@ Let $k = \lceil(1/2+\eps)n\rceil$. We can compute $f_{U^+_{S_n}}$:
 
 \begin{equation}
 \label{eq:fcalc}
-f_{U^+_{S_n}}(w, t-w) = \frac{\binom{n-t}{k-w}}{\binom{n}{k}} = \frac{(n-t)!k!(n-k)!}{n!(k-w)!(((n-k)-(t-w))!}
+f_{U^+_{S_n}}(t-w, w) = \frac{\binom{n-t}{k-w}}{\binom{n}{k}} = \frac{(n-t)!k!(n-k)!}{n!(k-w)!(((n-k)-(t-w))!}
     = \frac{(k)_w}{(n)_w} \frac{(n-k)_{t-w}}{(n-w)_{t-w}}
 \end{equation}
 
-Where $(n)_h = \frac{n!}{h!}$ is the falling factorial. We use the following elementary inequalities 
+Where $(n)_h = \frac{n!}{(n-h)!}$ is the falling factorial. We use the following elementary inequalities 
 for the falling factorial (which follow from the inequality $1+x \leq e^x$):
 
 $$
@@ -281,7 +285,7 @@ $$
 So we have:
 
 $$
-\frac{(k)_w}{(n)_w} \geq \frac{k^we^{-\frac{w^2}{2(n-w)}}}{n^we^{-\frac{w(w-1)}{2(n-w)}}} = \left(\frac{k}{n}\right)^w e^{-w\left(\frac{w}{2(k-w)}-\frac{w-1}{2n}\right)}
+\frac{(k)_w}{(n)_w} \geq \frac{k^we^{-\frac{w^2}{2(k-w)}}}{n^we^{-\frac{w(w-1)}{2n}}} = \left(\frac{k}{n}\right)^w e^{-w\left(\frac{w}{2(k-w)}-\frac{w-1}{2n}\right)}
 $$
 
 Recall that $w \leq t \leq \frac{1}{4}\sqrt{n}$, and that $k > \frac{1}{2}n$. Using this, we can see that for sufficiently large $n$, we have that $e^{-w\left(\frac{w}{2(k-w)}-\frac{w-1}{2n}\right)} \geq 1/\sqrt{2}$, so:
@@ -299,21 +303,23 @@ $$
 Substituting in \eqref{eq:fcalc}, we have:
 
 $$
-f_{U^+_{S_n}}(w, t-w)  \geq \frac{1}{2} \left(\frac{k}{n}\right)^w \left(\frac{n-k}{n} \right)^{t-w}
+f_{U^+_{S_n}}(t-w, w)  \geq \frac{1}{2} \left(\frac{k}{n}\right)^w \left(\frac{n-k}{n} \right)^{t-w}
 $$
     
 So that:
 
 \begin{align*}
-\delta & \geq \sum_{i=0}^{\lceil t/2 \rceil-1} \binom{t}{i} f_{U^+_{S_n}}(i, t-i) \\
+\delta & \geq \sum_{i=0}^{\lceil t/2 \rceil-1} \binom{t}{i} f_{U^+_{S_n}}(t-i, i) \\
        & \geq \sum_{i=0}^{\lceil t/2 \rceil-1} \frac{1}{2} \binom{t}{i} \left(\frac{k}{n}\right)^i \left(\frac{n-k}{n} \right)^{t-i} \\
        & = \frac{1}{2} \Probsub{X \sim \text{Bin}(t, k/n)}{X < \left\lceil \frac{t}{2} \right\rceil}
 \end{align*}
 
-By standard bounds on the tail of the binomial distribution \cite{Feller43},
-if $n$ is large enough and $\eps$ is small enough there exists a constant $C$ so that 
-$\Probsub{X \sim \text{Bin}(t, k/n)}{X < \left\lceil \frac{t}{2} \right\rceil} \geq C e^{-4\eps^2t}$.
-Rearranging, we get our desired result. 
+By standard lower bounds on the tail of the binomial distribution \cite{Feller43}, there exist $t_0$, $\epsilon_0$ and $C_0$
+so that if $t \geq t_0$ and $k/n - 1/2 \leq \epsilon_0$, then 
+$\Probsub{X \sim \text{Bin}(t, k/n)}{X < \left\lceil \frac{t}{2} \right\rceil} \geq C_0 e^{-4\eps^2t}$.
+Since the value of the left hand side for $t \leq t_0$ and sufficiently large $n$ is bounded below by some constant, we can choose a sufficiently small $C \leq C_0/2$ so that the inequality 
+$\Probsub{X \sim \text{Bin}(t, k/n)}{X < \left\lceil \frac{t}{2} \right\rceil} \geq 2C e^{-4\eps^2t}$ 
+holds for all $t$ and all sufficiently large $n$. Rearranging, we get the desired result. 
 
 \end{proof}
 
@@ -321,7 +327,7 @@ Rearranging, we get our desired result.
     \label{cor:querylbgen}
 Let $\eps(n)$ be a function satisfying $\eps(n) = \omega(n^{-1/4})$ and $\eps(n) = o(1)$. Then, all query
 algorithms $\A$ solving $\MAJ_{n,\eps}$ with success probability $2/3$ for all inputs do at least $\Omega(1/\eps(n)^2)$
-queries in the worst case. 
+queries. 
 \end{corollary}
 \begin{proof}
 Consider the query algorithm $\A^*$ consisting in repeating algorithm $\A$  multiple times and 
@@ -363,7 +369,7 @@ There is a $\BPP$-constructive separation of $\MAJ_{n, \eps}$ from randomized qu
 using $o(\eps^{-2})$ queries and running in $\poly(n)$ time. 
 \end{theorem}
 \begin{proof}
-    Fix two arbitrary constants $\delta_0, \delta_1$ with $0 < 4 \cdot \delta_1 < \delta_0 < \min \{C, 1/3\}$, 
+    Fix two arbitrary constants $\delta_0, \delta_1$ with $0 < 4 \cdot \delta_1 < \delta_0 < \min\{C, 4/3\}$, 
     for the constant $C$ of \cref{thm:querylb}.
     Let $\A$ be the algorithm being refuted, let $\determine{\A}$ be the determination
     of $\A$, and denote by $L(x)$ be the answer of $\MAJ_{n, \eps}$ on input $x$. 
@@ -379,19 +385,49 @@ using $o(\eps^{-2})$ queries and running in $\poly(n)$ time.
     \delta_0  \le & \,  \Prob{\A^*(x) \neq L(x)} \\
           = & \,  \Prob {\A^*(x) \neq L(x) | \determine{\A}(x) = L(x)} \Prob {\determine{\A}(x) = L(x)} \\
          &  + \Prob {\A^*(x) \neq L(x) | \determine{\A}(x) \neq L(x)} \Prob {\determine{\A}(x) \neq L(x)} \\
+         = & \,  \Prob {\A^*(x) \neq \determine{\A}(x) | \determine{\A}(x) = L(x)} \Prob {\determine{\A}(x) = L(x)} \\
+         &  + \Prob {\A^*(x) \neq L(x) | \determine{\A}(x) \neq L(x)} \Prob {\determine{\A}(x) \neq L(x)} \\
          < & \, \delta_1 + \Prob {\determine{\A}(x) \neq L(x)}.
     \end{align*}
 
     Therefore, $\Prob {\determine{\A}(x) \neq L(x)} > (\delta_0 - \delta_1) > 3 \delta_1$. Our refuter works
-    as follows: it repeatedly samples $x \samplefrom U_{S_n}$ and simulates $\A^*$ on input $x$ until it finds an
-    $x$ such that the output of $\A^*$ on $x$ is different from $L(x)$, and outputs that $x$. 
+    as follows: it repeatedly samples $x \samplefrom U_{S_n}$ and simulates $\A^*$ (with randomness) on input $x$ until it finds an
+    the output of $\A^*$ is different from $L(x)$, and outputs that $x$. 
     
     The probability that our refuter outputs a correct counterexample is bounded below by the probability 
-    that the event $\determine{\A}(x) \neq L(x)$, which occurs with probability greater than $3 \delta_1$,
-    happens before the event $\A^*(x) \neq \determine{\A}(x)$, which occurs with probability at most $\delta_1$. 
-    This probability is at least 
-    $\frac{3\delta_1 (1-\delta_1)}{3\delta_1 + \delta_1 - (3\delta_1) \cdot \delta_1} 
-    = \frac{3 (1-\delta_1)}{3(1-\delta_1)+ 1} > \frac{2}{3}$. \todo{verify this calculation}
+    that the event $\determine{\A}(x) \neq L(x)$
+    happens before the event $\A^*(x, r) \neq \determine{\A}(x)$, which is:
+    \begin{equation}
+        \label{eq:prbound}
+        \sum_{i=1}^{\infty} \Probsub{x,r}{\determine{\A}(x) \neq L(x) \wedge \A^*(x, r) = \determine{\A}(x)} \left(\Probsub{x,r}{\determine{\A}(x) = L(x) \wedge \A^*(x, r) = \determine{\A}(x)}  \right)^{i-1}
+    \end{equation}
+
+    Denote by $p = \Prob {\determine{\A}(x) \neq L(x)}$. Note that:
+    \begin{align*}
+         & \Probsub{x,r}{\determine{\A}(x) \neq L(x) \wedge \A^*(x, r) = \determine{\A}(x)} \\
+         & = \sum_{y\in S_n} \Probsub{x, r}{\determine{\A}(x) \neq L(x) \wedge \A^*(x, r) = \determine{\A}(x) | x = y} \Probsub{x}{x = y} \\
+         & = \sum_{\substack{y\in S_n \\ \determine{\A}(y) \neq L(y)}} \Probsub{r}{\A^*(y, r) = \determine{\A}(y)} \Probsub{x}{x = y} \\
+         & \geq \sum_{\substack{y\in S_n \\ \determine{\A}(y) \neq L(y)}} (1-\delta_1) \Probsub{x}{x = y} \\
+         & = (1-\delta_1)p.
+    \end{align*}
+    Similarly, 
+    $$
+        \Probsub{x,r}{\determine{\A}(x) = L(x) \wedge \A^*(x, r) = \determine{\A}(x)} \geq (1-\delta_1)(1-p).
+    $$
+    Therefore, \eqref{eq:prbound} is bounded below by:
+    $$
+        \sum_{i=1}^{\infty} (1-\delta_1)p ((1-\delta_1)(1-p))^{i-1} = \frac{p(1-\delta_1)}{\delta_1 + p(1-\delta_1)} > \frac{3(1-\delta_1)}{1+3(1-\delta_1)} > \frac{2}{3},
+    $$
+    where we used that $p > 3\delta_1$ and $\delta_1 < 1/3$. So our refuter has success probability greater than $2/3$, as desired. In fact, if we stop after a
+    sufficiently large constant number of 
+    repetitions to ensure always halting in polynomial time, we can check we still get success probability at least $2/3$. 
+
+
+
+
+    %This probability is at least 
+    %$\frac{3\delta_1 (1-\delta_1)}{3\delta_1 + \delta_1 - (3\delta_1) \cdot \delta_1} 
+    %= \frac{3 (1-\delta_1)}{3(1-\delta_1)+ 1} > \frac{2}{3}$. 
 
         
 \end{proof}
@@ -642,7 +678,7 @@ probability $p_-/q$, each of the two options with probability $1/2$.
 And finally, distribution $\D_3$ is statistically close to distribution $\D_4$, which is distribution 
 $\D_3$ conditioned on the output satisfying the promise. We conclude that query algorithms using $t(n)$
 queries can not distinguish between distributions $\D_1$ and $\D_4$ except with some small probability
-(exponentially small in $n$, in fact). \todowrite{Verify this claim.}
+(exponentially small in $n$, in fact). 
 
 Distribution $\D_4$ is a symmetric distribution on $X^+_\eps \cup X^-_\eps$, 
 and with similar arguments as in \cref{thm:querylb} 

@@ -29,7 +29,7 @@ We denote by $w^R$ the reverse of the word $w$. We denote by $w_i$ the $i$-th ch
 We denote by $w[i \ldots j]$ the subword of 
 $w$ from the $i$-th character to the $j$-th character inclusive, and denote by 
 $w(i \ldots j]$, $w[i \ldots j)$, $w(i \ldots j)$ the corresponding subwords with one or both of the
-ends excluded. 
+ends excluded. If $S \subseteq [n]$, we denote by $w[S]$ the subsequence of $w$ with indices in $S$. 
 We denote by $|w|$ the length of a word $w$. Given a nonnegative integer $n$, we let 
 $\bitlength n = \lfloor \log_2 n \rfloor + 1$ be the length of its binary representation.  
 
@@ -266,7 +266,8 @@ and $\AC^0$ circuits and the minimum circuit size problem. In this work, we will
 
 \subsection{Query Algorithms and $\MAJ$}
 
-For a function $\eps(n)$ of $n$, consider the following basic problem $\MAJ_{n, \eps}$:
+For a function $\eps(n)$ of $n$, consider the following basic problem $\MAJ_{n, \eps}$ (denoted 
+by $\textrm{PromiseMAJORITY}_{n, \eps}$ in \cite{ConstructiveSeparations}):
 
 \begin{itemize}
 	\item[] $\MAJ_{n, \eps}$ given an input $x \in \{0, 1\}^n$, determine whether $w_1(x) \geq (1/2+\eps)n$

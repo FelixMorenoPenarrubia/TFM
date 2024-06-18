@@ -1,17 +1,184 @@
 \todowrite{Write Chapter 2}
 
+This chapter is a more technical introduction to the rest of this work. 
+We lay out the definitions of fundamental concepts that we will be using
+and state the theorems proven in \cite{ConstructiveSeparations} that 
+motivate this work. 
+
 \section{Preliminaries}
 
-\section{Definition of Constructive Separation}
+We presuppose a certain level of familiarity with computational complexity theory. However, 
+for convenience in this section we will define some of the basic important concepts 
+that we will use, as well as explain some of the notational choices we have made
+in this work. We will not be overtly formal and detailed with the more common definitions.
+Anything not defined here can be found in standard references for the subject, 
+such as \cite{AB09}.
 
-Basic definition of constructive separation as in \cite{ConstructiveSeparations}.
+As usual in theoretical computer science, we will work with formal languages.
+Given a set $\Sigma$, the set $\Sigma^*$ is the set of \emph{words} over 
+the alphabet $\Sigma$, that is, the set of finite strings of elements of $\Sigma$.
+We denote the empty word by $\emptyword$. 
+A language $L$ over $\Sigma$ is a subset of $\Sigma^*$. We will often identify
+decisional problems with languages over $\{0, 1\}$, with the encodings of the positive instances of the 
+problem belonging to the language. 
+
+We sometimes identify a single character $x \in \Sigma$ with the word in $\Sigma^*$ consisting of that
+single characters. Given two words $w_1, w_2 \in \Sigma^*$, we denote by $w_1 \concat w_2$ their 
+concatenation. Sometimes we will omit the symbol and just write $w_1w_2$. We denote by exponentiation
+$w^n$ the repeated concatenation of $w$ $n$ times. For example, $1^n$ denotes a string of $n$ ones.
+We denote by $w^R$ the reverse of the word $w$. We denote by $w_i$ the $i$-th character of $w$ 
+($1$-indexed).
+We denote by $w[i \ldots j]$ the subword of 
+$w$ from the $i$-th character to the $j$-th character inclusive, and denote by 
+$w(i \ldots j]$, $w[i \ldots j)$, $w(i \ldots j)$ the corresponding subwords with one or both of the
+ends excluded. 
+We denote by $|w|$ the length of a word $w$. Given a nonnegative integer $n$, we let 
+$\bitlength n = \lfloor \log_2 n \rfloor + 1$ be the length of its binary representation.  
+
+A determinitic finite automaton (DFA) over an alphabet $\Sigma$ is a tuple $M = (Q, q_0, \delta, S)$, 
+where $Q$ is a finite set of states, $q_0 \in Q$ is the initial state, 
+$\delta \colon Q \times \Sigma \to Q$ is the transition function, and $S \subseteq Q$ is the 
+set of accepting states. An automaton $M$ accepts a word $w \in \Sigma^*$ if there exists a sequence
+of states $p_0, p_1, \ldots p_{|w|}$ with $p_0 = q_0$, $p_{i+1} = \delta(r_i, w_{i+1})$ , and 
+$p_{|w|} \in S$. A language is said to be regular if it is the set of words accepted by a 
+DFA. We denote by $\REG$ the set of all regular languages.
+A nondeterministic finite automaton is similarly defined, but the transition function now 
+can output \emph{sets} of states. We refer the reader to \cite{HopcroftUllman} to learn more about
+automata and languages. 
+
+A one-tape Turing machine over an input alphabet $\Sigma$ is a tuple $(Q, \Gamma, \blank, 
+\delta, q_0, q_A, q_R)$, where $Q$ is the set of states, $\Gamma \supset \Sigma$ is the tape alphabet,
+$\blank \in \Gamma \setminus \Sigma$ is the blank symbol, 
+$delta \colon Q \times \Gamma \to Q \times \Gamma \times \{L, R\}$ is the transition function, and
+$q_0, q_A, q_R \in Q$ are the initial, accepting and rejecting states. The Turing machine 
+has an infinite bidirectional tape subdivided into cells which we will index by integers, 
+and a moving head which can read and write on one cell at a time. 
+The execution of a machine on input $x \in \Sigma^*$ begins with all the 
+cells of the tape containing the character $\blank$ except the cells from
+$1$ to $|x|$, which contain $x$, and with the moving head positioned in cell $1$.
+The execution progresses as follows: if the machine is in state $q$ and the 
+moving head is reading character $c$ from is cell and $\delta(q, c) = (q', c', D)$,
+in one step the machine will write character $c'$ on the current cell of the head,
+will move the head one cell in direction $D$ and will switch to state $q'$. 
+The execution stops when the machine enters either the accepting or rejecting 
+states. The set of words so that the machine enters the accepting state with that 
+word as input is the language recognized by the machine. We can also define non-deterministic
+machines, in which the transition function can point to sets of \emph{two} states, and 
+we say that a word is accepted by the machine if there is a choice of transitions to follow
+so that the word is accepted. 
+
+We defined one-tape Turing machines, in contrast with the 
+``multitape'' model which is more common in complexity theory \cite{AB09}, because 
+we will use this model of computation in \cref{chp:tm}. However, other than that, 
+our ``default'' model of computation will be the multitape Turing machines, and 
+``algorithms'' are understood to be multi-tape TMs unless otherwise specified. 
+We will abbreviate 
+``one-tape Turing machine'' to 1-TM, and we will use 1-DTM and 1-NTM to specifically 
+refer to deterministic and non-deterministic one-tape Turing machines, respectively.
+It is well-known that 1-TMs can simulate multitape TMs with a quadratic overhead. 
+One of the techniques to do so is to set the tape alphabet of the 1-TM to be the product
+of $k$ copies of the tape alphabet of the $k$-tape TM. This way, each cell in the tape is divided 
+into $k$ ``tracks'', each representing one tape of the $k$-tape machine. We will use again
+at some points in \cref{chp:tm}
+this technique of extending the tape alphabet and dividing into tracks. 
+
+Now we will see some definitions about query algorithms, the other limited 
+model of computation we will work with in this thesis. 
+The following definitions are not so common, so we isolate them for clarity.
+
+\begin{definition}
+	A function $f \colon \{0, 1\}^n \to \{0, 1\}$ is a \emph{$k$-junta} if there is a set of $k$ indices
+	so that $f$ does not depend on the bits outside that set.
+
+	A decision tree over $\{0, 1\}^n$ is a tree, where each internal node
+is labeled with an index $i$ and has two children, the two edges leading from an internal node to its
+children are labeled 0 and 1, and each leaf is labeled with an output value (0 or 1). A decision tree
+computes a function $f \colon \{0, 1\}^n \to \{0, 1\}$ by moving from the root to a leaf according to the values of the
+values queried.
+\end{definition}
+
+We also want to consider query algorithms that are \emph{uniform} (i.e. they are generated by 
+a single algorithm for all $n$), and also that are \emph{probabilistic}.
+
+\begin{definition}
+	Let $k(n)$ be a function of $n$ with $k(n) \leq n$.
+
+	A \emph{uniform distribution of $k(n)$-juntas} is a probabilistic algorithm $\A$ which, 
+	being run on input $x$ with $|x| = n$, is given as input $n$ in binary together with 
+	$O(k(n) \log n)$ bits describing a subset $S$ of size $k(n)$ of $[n]$, together with the values
+	of $x$ on the indices of $S$.
+
+	A \emph{(randomized) query algorithm using $k(n)$ queries} is a probabilistic algorithm $\A$
+	which, being run on input $x$ with $|x| = n$, is given as input $n$ in binary and has oracle access
+	to $x$ (i.e. has a special tape and a special state so that, when writing $i$ in binary in the tape,
+	is given the value of $x_i$) which always does at most $k(n)$ oracle queries.
+\end{definition}
+
+The way inputs are given in the definition of query algorithm is relevant, since we will 
+discuss query algorithms running in time sublinear in $n$. 
+
+When executing a randomized or non-deterministic algorithm $\A$ on input $x$
+with a fixed sequence of 
+random or non-deterministic choices $r$, we will usually denote the result by $\A(x, r)$.
+Another concept we will use for randomized algorithms is the \emph{probability gap}.
+
+\begin{definition}
+A randomized decisional algorithm $\A(x, r)$ has \emph{probability gap} $\delta$ if there exists a function
+$\determine{\A} \colon \{0, 1\}^* \to \{0, 1\}$ such that, for all $x$, 
+$\Probsub{r}{\A(x, r) = \determine{A}(x)} \geq \frac{1 + \delta}{2}$. 
+The function $\determine{\A}$ is the \emph{determination} of $\A$.
+
+We say that a randomized algorithm $\A(x, r)$ has bounded probability gap if it has probability gap $\delta$
+for some $\delta > 0$. 
+\end{definition}
+
+Finally, we define some terms related to boolean circuits. 
+
+A boolean circuit is a directed acyclic graph where each of the non-source vertices is called a 
+gate and has associated a type $\wedge$, $\vee$ or $\neg$, corresponding to the logical operations
+\texttt{AND}, \texttt{OR} and \texttt{NOT}. The vertices of $\neg$ type have indegree $1$; we say
+that the circuit is of \emph{unbounded fan-in} if we allow the vertices of type $\wedge$ and 
+$\vee$ to have any indegree, otherwise the vertices of $\wedge$ and $\vee$ types should have
+indegree $2$. The size $|C|$ of a circuit $C$ is the number of vertices in it.
+A \emph{circuit family} is a sequence of circuits $\{C_n\}_{n}$ in which 
+$C_i$ has $i$ sources. It has polynomial size (respectively, quasipolynomial size) if there exists
+a polynomial $f(n)$ (resp. $f(n) = 2^{(\log n)^{O(1)}}$) so that $|C_n| \leq f(n)$.
+A circuit with $n$ sources is evaluated on an input $x \in \{0, 1\}^n$ in the natural way. 
+
+\begin{definition}
+	The \emph{depth} of a circuit is the length of the longest path from a source to a sink.
+
+	A family of unbounded fan-in circuits is $\AC^0$ (resp. $\qAC^0$) if it has polynomial
+	(resp. quasipolynomial) size and all the circuits in the family
+	have depth bounded by a constant. 
+
+	A family $\{C_n\}_{n}$ of circuits is $\NC^1$  (resp. $\qNC^1$) if it has polynomial 
+	(resp. quasipolynomial)
+	size and circuit $C_n$
+	has depth $O(\log n)$.
+\end{definition}
+
+\begin{definition}
+	A family of circuits $\{C_n\}_{n}$ is \emph{polylogtime-uniform} if there is an 
+	algorithm $B$ that, given $n$ in binary and additional input of length $2 \bitlength |C_n|$ 
+	identifying two vertices of $C_n$, reports the types of gates of the two vertices and whether
+	there is an edge between them in $\polylog(n)$ time.  
+\end{definition}
+
+
+
+\section{Refuters and Constructive Separations}
+
+\subsection{Basic Definitions}
+
+Here we define the concept of \emph{constructive separation} as defined in \cite{ConstructiveSeparations}.
 
 \begin{definition}
 	\label{def:refuter}
-	For a function $f \colon {0, 1}^* \to {0, 1}$ and an algorithm $\A$, 
+	For a function $f \colon \{0, 1\}^* \to \{0, 1\}$ and an algorithm $\A$, 
 	a $\PTIME$-refuter for $f$ against $\A$ is a deterministic polynomial time
 	algorithm $R$ that, given input $1^n$, prints a string $x \in \{0, 1\}^n$,
-	such that for infinitely many $n$, $A(x) \neq f(x)$.
+	such that for infinitely many $n$, $\A(x) \neq f(x)$.
 	
 	A $\BPP$-refuter for $f$ against $\A$ is a randomized polynomial time algorithm
 	$R$ that, given input $1^n$, prints a string $x \in \{0, 1\}^n$, such that 
@@ -19,9 +186,15 @@ Basic definition of constructive separation as in \cite{ConstructiveSeparations}
 
 	A $\ZPP$-refuter for $f$ against $\A$ is a randomized polynomial time algorithm $R$
 	that, given input $1^n$, prints $x \in \{0, 1\}^n \cup \{\blank\}$, such that for 
-	infinitely many $n$, either $x = \blank$ or $A(x) \neq f(x)$, and $x \neq \blank$ with
+	infinitely many $n$, either $x = \blank$ or $\A(x) \neq f(x)$, and $x \neq \blank$ with
 	probability at least $2/3$. 
 \end{definition}
+
+We allow the algorithm $\A$ to be randomized, but we will only consider algorithms with bounded 
+probability gap. Unless otherwise stated, when we say we are constructing a refuter against a 
+class of randomized algorithms $\A$ we will impose that the algorithms $\A$ being refuted 
+must have a probability gap of $1/3$, and the outputs of the refuter $R$ must be counterexamples
+against $\determine{\A}$, the determination function of $\A$. 
 
 \begin{definition}
 	\label{def:constructiveseparation}
@@ -30,14 +203,83 @@ Basic definition of constructive separation as in \cite{ConstructiveSeparations}
 	in $\mathcal{C}$, there is a refuter for $f$ against $A$ that is computable in $\mathcal{D}$. 
 \end{definition}
 
-\section{Main Results of \cite{ConstructiveSeparations}}
+This is the definition as given in \cite[Definition 1.1]{ConstructiveSeparations}, but in the article
+$\D$-refuters and $\D$-constructive separations for other classes of algorithms $\D$ are also considered.
+For other classes of deterministic algorithms $\D$, the definition of $\D$-refuter and $\D$-constructive 
+separation is as in the definition of $\PTIME$-refuter, but replacing ``polynomial time algorithm''
+with ``algorithm from the class $\D$''.
 
-Briefly state the results of \cite{ConstructiveSeparations}, pointing to further discussion in the next chapters. 
+\subsection{Additional Aspects of Refuters}
 
-\subsection{Constructive Separations for Known Results Imply Breakthroughs}
+A possible relaxation that we can consider of \cref{def:refuter} is to allow the refuter 
+to output not only one counterexample, but a list of possible candidates that contains
+at least one counterexample.
+
+\begin{definition}
+	For a function $f \colon \{0, 1\}^* \to \{0, 1\}$, an algorithm $\A$,
+	and a function $\ell(n) \colon \mathbb{N} \to \mathbb{N}$ 
+	a $\ell(n)$-length $\PTIME$-list-refuter for $f$ against $\A$ is a deterministic polynomial time
+	algorithm $R$ that, given input $1^n$, prints a list of length $n$ strings
+	$x^{(1)}, \ldots, x^{(\ell(n))} \in \{0, 1\}^n$,
+	such that for infinitely many $n$, there exists an $i \in [\ell(n)]$ so that 
+	$\A(x^{(i)}) \neq f(x^{(i)})$.
+\end{definition}
+
+We can extend the definition to $\mathcal{D}$-list-refuters for other classes $\mathcal{D}$,
+and we can refer to polynomial-length or quasipolynomial-length list-refuters to indicate that 
+the function $\ell(n)$ is polynomial or quasipolynomial, respectively. 
+
+Another possible variant concerns the dependency of the refuter with the algorithm. 
+Note that in \cref{def:constructiveseparation}, the refuter is allowed to 
+depend non-uniformly in the algorithm. In \cref{Gutfreund05}, the refuter is an uniform
+algorithm which is given the source code and the running time of the algorithm being refuted. 
+Atserias \cite{Atserias06} constructed a $\BPP$-refuter against polynomial-size circuits 
+computing SAT which is \emph{almost} black-box: it only needs oracle access to the circuits
+and a bound on the exponent of their size. A truly black-box refuter would only use oracle 
+access to the algorithm being refuted. We can also consider refuters that do not depend on the 
+algorithm being refuted at all: those were called \emph{explicit obstructions} in \cite{Chen20},
+or also \emph{oblivious list-refuters}.
+
+\begin{definition}
+	For a function $f \colon \{0, 1\}^* \to \{0, 1\}$, a class of algorithms $\mathcal{C}$,
+	and a function $\ell(n) \colon \mathbb{N} \to \mathbb{N}$ 
+	a $\ell(n)$-length $\PTIME$ explicit obstructions refuter for $f$ against $\mathcal{C}$ is a deterministic polynomial time
+	algorithm $R$ that, given input $1^n$, prints a list of length $n$ strings
+	$x^{(1)}, \ldots, x^{(\ell(n))} \in \{0, 1\}^n$,
+	such that for all $\A in \mathcal{C}$, for infinitely many $n$, there exists an $i \in [\ell(n)]$ so that 
+	$\A(x^{(i)}) \neq f(x^{(i)})$.
+\end{definition}
 
 
-State the results we will discuss in this thesis.
+
+\section{Constructive Separations for Known Results Imply Breakthroughs}
+
+We proceed to state the 
+theorems proven in \cite{ConstructiveSeparations} that are the foundations 
+for this work. They say that the existence of constructive separations of problems 
+with known lower bounds for restricted models of computation implies breakthrough results in complexity theory. 
+This section is an introduction to these results; their proofs and further study of them will be 
+done in the following chapters. 
+
+In \cite{ConstructiveSeparations} there are four pairs of restricted models of computation
+and computational problems studied: query algorithms and the promise majority problem,
+one-tape Turing machines and the palindromes problem, streaming algorithms and the set disjointness problem,
+and $\AC^0$ circuits and the minimum circuit size problem. In this work, we will only consider the first two. 
+
+\subsection{Query Algorithms and $\MAJ$}
+
+For a function $\eps(n)$ of $n$, consider the following basic problem $\MAJ_{n, \eps}$:
+
+\begin{itemize}
+	\item[] $\MAJ_{n, \eps}$ given an input $x \in \{0, 1\}^n$, determine whether $w_1(x) \geq (1/2+\eps)n$
+	or $w_1(x) \leq (1/2-\eps)n$, given that it is one of the two cases. 
+\end{itemize}
+
+It is proven in \cite{Canetti95} that query algorithms solving this problem must make $\Omega(1/\eps^2)$ 
+queries; in \cite{ConstructiveSeparations} they show that making the lower bound sufficiently constructive
+implies $\P \neq \NP$! Here, ``sufficiently constructive'' means that the refuter needs to be 
+polylogtime-uniform-$\AC^0$ (though, as we will see, polylogtime-uniform-$\qAC^0$ refuters suffice), but
+it is still possible to get $\P \neq \PSPACE$ using the less restrictive polylogtime-uniform-$\NC^1$ circuits.
 
 \begin{restatable}[Theorem 1.6 from \cite{ConstructiveSeparations}]{theorem}{thmcsrefuterqa}\label{thm:csrefuterqa} 
 	Let $\eps$ be a function of $n$ satisfying $\eps \leq 1/(\log n)^{\omega(1)}$, and $1/\eps$ is a positive integer
@@ -49,6 +291,17 @@ State the results we will discuss in this thesis.
          query algorithms $A$ using $o(1/\eps^2)$ queries and $\poly(1/\eps)$ time, then $\PSPACE \ne \PTIME$.
 	\end{itemize}
 \end{restatable}
+
+We will discuss this result and other aspects of refuters of the $\MAJ$ problem 
+for query algorithms in \cref{chp:qa}.
+
+\subsection{One-Tape Turing Machines and $\PAL$}
+
+Consider the language of binary palindromes $\PAL = \{w \in \{0, 1\}^* : w = w^R\}$. One of the 
+earliest results in complexity theory is a lower bound of $\Omega(n^2)$ time for recognizing 
+this language in the model of 1-TMs. This bound works even for non-deterministic machines. 
+In \cite{ConstructiveSeparations} they show that making the lower bound constructive
+would imply breakthrough circuit lower bounds:
 
 \begin{restatable}[Theorem 3.4 from \cite{ConstructiveSeparations}]{theorem}{thmcsrefutertm}\label{thm:csrefutertm} 
 The following hold:
@@ -67,6 +320,8 @@ The following hold:
 	\end{itemize}
 \end{restatable}
 
+We will discuss this result and other aspects of refuters of the $\PAL$ problem 
+for 1-TMs in \cref{chp:qa}.
 
 \subsection{Lemmas About Circuit Complexity of Refuters}
 
@@ -88,49 +343,52 @@ implying breakthrough results all follow the same scheme:
 
 The first step is done through the following simple lemmas:
 
-\todowritehp{Review the lemma and implement the changes suggested by Atserias}
-
 \begin{lemma}
 	\label{lem:circuitbinarytounary}
-	Let $T(n), s(n) \geq n$ be functions and assume $\DTIME(T(2^n)) \subseteq \SIZE(s(n))$. 
-	Then, for every algorithm $R$ running in time $T(n)$ and outputting $n$ bits,
-	the output of $R(1^n)$ can be computed by a circuit of size $s(2 \lceil \log n \rceil)$ 
-	(which takes as input an index $0 \leq i < n$ and outputs the $i$-th bit of $R(1^n)$).
+	Let $T(n), s(n)$ be non-decreasing functions such that $T(n) \geq n$ and $s(n) \geq n$. 
+	If $\DTIME(T(2^{n/2})) \subseteq \SIZE(s(n))$,
+	then for every algorithm $R$ running in time $T(n)$ and outputting $n$ bits,
+	the output of $R(1^n)$ can be computed by a circuit of size $s(2 \bitlength n)$,
+	which takes as input an index $0 \leq i < n$ and outputs the $i$-th bit of $R(1^n)$.
 \end{lemma}
 \begin{proof}
 Consider the function $f_R(m, i)$ which, given $m$ and $i$ in binary, outputs the $i$-th bit of $R(1^m)$. The inputs to $f_R$ can 
-be encoded in $2 \lceil \log m \rceil$ bits so that the input size is the same for each input $(m, i)$ with the same $m$.
-$f_R \in \DTIME(T(2^N))$, so $f_R$ has circuits of size $s(N)$, where $N = 2 \lceil \log m \rceil$ is the input size. 
-We get the desired result by considering, for each $n$, the circuit for $f_R$ with input size $2 \lceil \log n \rceil$
-which we modify by fixing the first $\lceil \log n \rceil$ input 
-bits to the value of $n$. 
+be encoded in $N = 2 \bitlength n$ bits so that the input size is the same for each input $(m, i)$ with the same $m$.
+Processing the input takes $O(2^{N/2}) = O(T(2^{N/2}))$ time and computing takes $T(n) \leq T(2^{N/2})$ time, so
+$f_R \in \DTIME(T(2^{N/2}))$. 
+Therefore, $f_R$ has circuits of size $s(N)$. 
+We get the desired result by considering, for each $n$, the circuit for $f_R$ with input size $2 \bitlength n$
+which we modify by fixing the first $\bitlength n$ input 
+bits to the binary representation of $n$. 
 \end{proof}
 
 \begin{lemma}
 	\label{lem:acbinarytounary}
 	The following hold:
 	\begin{enumerate}
-		\item Assuming $\PTIME = \NP$, then for every polylogtime-uniform $\qAC^0$ algorithm $R$
-		such that $R(1^n)$ outputs $n$ bits, it holds that $R(1^n)$ has circuit complexity 
-		$\polylog(n)$.
-		\item Assuming $\PTIME = \PSPACE$, then for every polylogtime-uniform $\qNC^1$ algorithm
-		$R$ such that $R(1^n)$ outputs $n$ bits, it holds that $R(1^n)$ has circuit complexity 
-		$\polylog(n)$.
+		\item Assuming $\PTIME = \NP$, for every polylogtime-uniform $\qAC^0$ algorithm $R$
+		such that $R(1^n)$ outputs $n$ bits, $R(1^n)$ can be computed by a $\polylog(n)$-size circuit
+		which takes as input an index $0 \leq i < n$ and outputs the $i$-th bit of $R(1^n)$.
+		\item Assuming $\PTIME = \PSPACE$, for every polylogtime-uniform $\qNC^1$ algorithm
+		$R$ such that $R(1^n)$ outputs $n$ bits, $R(1^n)$ can be computed by a $\polylog(n)$-size circuit
+		which takes as input an index $0 \leq i < n$ and outputs the $i$-th bit of $R(1^n)$.
 	\end{enumerate}
 \end{lemma}
 
 \begin{proof}
+	We prove the first item:
 
+	Let $B$ be the polynomial-time algorithm that, given integer $n$
+	in binary and $polylog(n)$-bit additional input, reports gate and wire information
+	for a $\qAC^0$ circuit $R_n$. Consider the function $f_R(m, i)$ which, 
+	given $m$ and $i$ in binary, outputs the $i$-th bit of $R(1^m) = R_m(1^m)$.
+
+	We have that $f_R \in \PH$, since the evaluation of the circuit consists 
+	of a finite alternation of existential and universal statements (corresponding to the 
+	OR and AND gates of the circuit) which can be verified using the polynomial-time
+	algorithm $B$. Since $\P = \NP$, $f_R$ is computable in $\P$, which means that it has 
+	polynomial-size circuits. We conclude as in the previous lemma. 
+
+	The same argument applies to the second item replacing $\qAC^0$ by $\qNC^1$ and $\PH$ by $\PSPACE$. 
 \end{proof}
-
-\subsection{Other Results}
-
-\todowrite{Briefly mention other results of the article}
-
-\section{Additional Aspects of Refuters}
-
-\todowrite{Decide what to say about additional aspects of refuters}
-
-Explain additional aspects such as list refuters, black-boxness/gray-boxness/explicit constructions, certifiability, ``minimum refuting size vs. minimum counterexample size'', etc.
-Mention results of \cite{Atserias06} and \cite{Bogdanov10}. 
 

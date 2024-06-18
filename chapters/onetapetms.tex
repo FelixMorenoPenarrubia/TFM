@@ -257,7 +257,7 @@ purposes better. First, we prove the result with more generality, with the circu
 bound we obtain being parametrized by the time complexity of the refuter, and not just
 stated in two discrete cases for $\PTIME$ and $\PTIME^\NP$ (we will not discuss results about space complexity). 
 This more granular statement will be 
-useful to compare the result with the refuters we obtain in \cref{sec:refuteragainstweaker}.
+useful to compare the result with the refuters we obtain in \cref{sec:refuteragainstweakertm}.
 
 Second, we emphasize in the statement that it is enough to have refuters against 1-TMs which
 are promised to accept only palindromes, that is, that reject for every non-palindrome. 
@@ -273,16 +273,16 @@ hope to find such constructive separations even if we believe that the cryptogra
     Let $\{T_i(n)\}_{i \in \mathcal{I}}$ be a family of functions, let $\mathcal{O}$ be any language
     and let $\mathcal{C}^\mathcal{O}$ denote the class of algorithms
     running in time $T_i(n)$ for some $i \in \mathcal{I}$ with oracle access to $\mathcal{O}$. 
-    Let $f(n)$ be a function with $f(n) = \Omega(\log n)$ and $f(n+1) = O(f(n))$.
+    Let $f(n)$ be a non-decreasing function with $f(n) = \Omega(\log n)$ and $f(2n) = O(f(n))$.
     If there is a $\mathcal{C}^\mathcal{O}$-constructive separation of $\PAL$ from
     1-NTMs promised to accept only palindromes running in time $O(n \cdot f(n))$, then 
-    $$\bigcup_{i\in \mathcal{I}} \DTIME[T_i(2^n)]^{\mathcal{O}} \not\subset \SIZE[f(2^{n/2})^\delta]$$
+    $$\bigcup_{i\in \mathcal{I}} \DTIME[T_i(2^{n/2})]^{\mathcal{O}} \not\subset \SIZE[f(2^{n/2})^\delta]$$
     for some universal constant $\delta > 0$.  
 \end{theorem}
 \begin{proof}
-Assume that $\bigcup_{i\in \mathcal{I}} \DTIME[T_i(2^n)]^{\mathcal{O}} \subseteq \SIZE[f(2^{n/2})^\delta]$. 
+Assume that $\bigcup_{i\in \mathcal{I}} \DTIME[T_i(2^{n/2})]^{\mathcal{O}} \subseteq \SIZE[f(2^{n/2})^\delta]$. 
 By \cref{lem:circuitbinarytounary}, the output of any refuter $R \in \mathcal{C}^\mathcal{O}$ has circuit complexity
-$O(f(n+1)^\delta) = O(f(n)^\delta)$. We will construct a 1-NTM $M$ running in time $O(n \cdot f(n))$
+$O(f(2^{\bitlength n})^\delta) = O(f(2n)^\delta) = O(f(n)^\delta)$. We will construct a 1-NTM $M$ running in time $O(n \cdot f(n))$
 that works correctly on the output of any such refuter, proving the contrapositive of the desired statement. 
 First, $M$ guesses a circuit $C$ of size $s = O(f(n)^\delta)$ and writes its description around the beginning of the tape.
 Then, $M$ verifies that the circuit generates the input $x$ by moving the circuit and a counter through the tape
@@ -306,11 +306,13 @@ The following hold:
 Take $\mathcal{I} = \mathbb{N}$, $T_i(n) = n^i$, $f(n) = n^{0.1}$ and $\mathcal{O} = \SAT$ or $\mathcal{O} = \emptyset$ (respectively) in \cref{thm:refutertm}.
 \end{proof}
 
-Interestingly, those lower bounds for $\E^{\NP}$ and $\E$ are precisely the ones that are needed for derandomization of
+Interestingly, those lower bounds for $\E^{\NP}$ and $\E$ are precisely the ones that are sufficient
+for derandomization of
 algorithms:
 
 \begin{theorem}[\cite{NW94, IW97}] 
     \label{thm:nisanwigderson}
+    The following hold:
     \begin{itemize}
     \item If $\E \not\subset \SIZE[2^{\delta n}]$, then there exists a pseudorandom generator $G : \{0, 1\}^s \to \{0, 1\}^n$,
     with $n = 2^{\Omega(s)}$ running in time $2^{O(s)}$ which fools circuits of size $n^3$.
